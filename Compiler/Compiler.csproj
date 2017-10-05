@@ -42,11 +42,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ICompiler.cs" />
+    <Compile Include="Syntax\ISyntaxElement.cs" />
+    <Compile Include="Syntax\ISyntaxTree.cs" />
+    <Compile Include="Lexer\ILexerElement.cs" />
+    <Compile Include="Lexer\VariableLex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Variables.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Pascal\test.ps" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
