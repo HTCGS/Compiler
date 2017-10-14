@@ -15,6 +15,8 @@ namespace Compiler
     enum Keyword
     {
         Unknown,
-        Variable
+        LanguageSymbols,
+        Variable,
+        Function
     }
 }
