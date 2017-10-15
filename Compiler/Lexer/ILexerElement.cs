@@ -10,6 +10,7 @@ namespace Compiler
     {
         string Key { get; }
         Keyword GetKeyword(string input);
+        ISyntaxObject GetSyntaxScaner();
     }
 
     enum Keyword

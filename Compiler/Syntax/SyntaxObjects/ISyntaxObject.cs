@@ -8,9 +8,9 @@ namespace Compiler
 {
     interface ISyntaxObject
     {
-        List<ISyntaxElement> Syntax { get; }
-        string Line { get; }
-        string[] Elements { get; }
+        List<ISyntaxElement> Syntax { get; set; }
+        string Line { get; set; }
+        string[] Elements { get; set; }
         SyntaxError Check();
     }
 

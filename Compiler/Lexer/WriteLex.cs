@@ -22,7 +22,15 @@ namespace Compiler
 
         public Keyword GetKeyword(string input)
         {
-            return Keyword.Function;
+            if (input == Key) return Keyword.Function;
+            return Keyword.Unknown;
+        }
+
+        public ISyntaxObject GetSyntaxScaner()
+        {
+            ISyntaxObject syntaxObject = new WriteSyntax();
+            syntaxObject.Elements[0] = this.Key;
+            return syntaxObject;
         }
     }
 }

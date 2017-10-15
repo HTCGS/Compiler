@@ -8,11 +8,11 @@ namespace Compiler
 {
     class SyntaxObject : ISyntaxObject
     {
-        public List<ISyntaxElement> Syntax { get; protected set; }
+        public List<ISyntaxElement> Syntax { get; set; }
 
-        public string Line { get; protected set; }
+        public string Line { get; set; }
 
-        public string[] Elements { get; protected set; }
+        public string[] Elements { get; set; }
 
         public SyntaxObject()
         {
@@ -22,7 +22,7 @@ namespace Compiler
         public virtual SyntaxError Check()
         {
             string line = this.Line;
-            line = line.Replace(" ", "");
+            line = line.Replace(" ", string.Empty);
             line = line.Remove(0, Elements[0].Length);
 
             for (int i = 1; i < Syntax.Count; i++)

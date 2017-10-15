@@ -41,6 +41,11 @@ namespace Compiler
             if (symbol == '(' || symbol == ')') return SymbolType.Bracket;
             return SymbolType.Punctuation;
         }
+
+        public ISyntaxObject GetSyntaxScaner()
+        {
+            return null;
+        }
     }
 
     enum SymbolType

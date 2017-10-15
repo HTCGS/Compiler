@@ -35,5 +35,12 @@ namespace Compiler
             if (Variables.Boolean.ContainsKey(input)) return Keyword.Variable;
             return Keyword.Unknown;
         }
+
+        public ISyntaxObject GetSyntaxScaner()
+        {
+            ISyntaxObject syntaxObject = new VariableSyntax();
+            syntaxObject.Elements[0] = this.Key;
+            return syntaxObject;
+        }
     }
 }

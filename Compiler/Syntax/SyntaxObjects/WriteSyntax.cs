@@ -12,14 +12,10 @@ namespace Compiler
         {
             this.Syntax = new List<ISyntaxElement>
             {
+                new FunctionIdSyntax("Write", "Write"),
+                new BracketSyntax("Bracket", "("),
                 new IdSyntax(),
-                new AssignSyntax("Assign", ":="),
-                new ExpressionSyntax("Expression"),
-                new AssignSyntax("Assign", "#"),
-                new ExpressionSyntax("Expression"),
-                new IdSyntax(),
-                new IdSyntax()
-
+                new BracketSyntax("Bracket", ")")
             };
             this.Elements = new string[Syntax.Count];
         }

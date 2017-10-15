@@ -19,6 +19,8 @@ namespace Compiler
         keyword,
         ID,
         Expression,
-        Assign
+        Assign,
+        Function,
+        Symbol
     }
 }

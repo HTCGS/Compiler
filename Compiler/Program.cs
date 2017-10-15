@@ -29,13 +29,18 @@ namespace Compiler
                 Console.WriteLine(item);
             }
 
-            WriteSyntax writeSyntax = new WriteSyntax("a := 1 + 1 +# a -a/a bb");
-            writeSyntax.Elements[0] = "a";
+            WriteSyntax writeSyntax = new WriteSyntax("Write(a)");
+            writeSyntax.Elements[0] = "Write";
             Console.WriteLine(writeSyntax.Check());
             foreach (var item in writeSyntax.Elements)
             {
                 Console.WriteLine(item);
             }
+
+            Lexer lexer = new Lexer(@"..\..\Pascal\test.ps");
+            lexer.ReadFile(lexer.FilePath);
+            ISyntaxObject syntaxObject = lexer.ScanFile();
+
 
 
 
