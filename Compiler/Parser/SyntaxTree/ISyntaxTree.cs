@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    interface ICompiler
+    interface ISyntaxTree
     {
-
-
+        dynamic Answer { get; set; }
+        List<ISyntaxTree> Childs { get; }
+        dynamic Execute();
     }
 }

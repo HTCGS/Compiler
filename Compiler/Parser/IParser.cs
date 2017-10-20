@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    interface ISyntaxTree
+    interface IParser
     {
-
 
 
     }

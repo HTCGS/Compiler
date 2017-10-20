@@ -42,9 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ICompiler.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Lexer\ILexer.cs" />
     <Compile Include="Lexer\Lexer.cs" />
     <Compile Include="Lexer\WriteLex.cs" />
+    <Compile Include="Lexer\WritelnLex.cs" />
+    <Compile Include="Parser\IParser.cs" />
+    <Compile Include="Parser\IParserElement.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\SyntaxTree\ISyntaxTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Operations\AddTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Operations\ConstTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Operations\DivisionTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Operations\MultiplicationTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Operations\SubtractionTree.cs" />
     <Compile Include="Syntax\BracketSyntax.cs" />
     <Compile Include="Syntax\ExpressionSyntax.cs" />
     <Compile Include="Lexer\SymbolLex.cs" />
@@ -53,15 +64,15 @@
     <Compile Include="Syntax\IdSyntax.cs" />
     <Compile Include="Syntax\ISyntaxElement.cs" />
     <Compile Include="Syntax\SymbolSyntax.cs" />
+    <Compile Include="Syntax\SyntaxObjects\EmptySyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\ISyntaxObject.cs" />
-    <Compile Include="Syntax\SyntacTree\ISyntaxTree.cs" />
     <Compile Include="Lexer\ILexerElement.cs" />
     <Compile Include="Lexer\VariableLex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Syntax\SyntacTree\Syntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\SyntaxObject.cs" />
     <Compile Include="Syntax\SyntaxObjects\VariableSyntax.cs" />
+    <Compile Include="Syntax\SyntaxObjects\WritelnSyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\WriteSyntax.cs" />
     <Compile Include="Variables.cs" />
   </ItemGroup>

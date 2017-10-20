@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Compiler
+{
+    class WritelnSyntax : SyntaxObject
+    {
+        public WritelnSyntax()
+        {
+            this.Syntax = new List<ISyntaxElement>
+            {
+                new FunctionIdSyntax("Write", "Writeln"),
+                new BracketSyntax("Bracket", "("),
+                new IdSyntax(),
+                new BracketSyntax("Bracket", ")")
+            };
+            this.Elements = new string[Syntax.Count];
+        }
+
+        public WritelnSyntax(string line) : this()
+        {
+            this.Line = line;
+        }
+
+    }
+}

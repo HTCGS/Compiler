@@ -58,7 +58,6 @@ namespace Compiler
 
         public SyntaxType GetSyntaxType()
         {
-            if (this.Name == "ID") return SyntaxType.ID;
             return SyntaxType.Expression;
         }
     }

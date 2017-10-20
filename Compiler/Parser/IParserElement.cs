@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class Syntax
+    interface IParserElement
     {
+        SyntaxError Check();
+        void Normalize();
     }
 }

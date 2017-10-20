@@ -6,14 +6,14 @@ using System.IO;
 
 namespace Compiler
 {
-    class Lexer
+    class Lexer :ILexer
     {
         public string FilePath { get; set; }
         public string[] Code { get; set; }
 
         private int Line;
 
-        public List<ILexerElement> LexElements;
+        public List<ILexerElement> LexElements { get; set; }
 
         public Lexer()
         {
@@ -21,7 +21,8 @@ namespace Compiler
             {
                 new SymbolLex(),
                 new VariableLex(),
-                new WriteLex()
+                new WriteLex(),
+                new WritelnLex()
             };
             Line = -1;
         }
@@ -31,28 +32,32 @@ namespace Compiler
             this.FilePath = path;
         }
 
-        public void ReadFile(string path)
+        public string[] ReadFile(string path)
         {
             Code = File.ReadAllLines(path);
+            return Code;
         }
 
         public ISyntaxObject ScanFile()
         {
             Line++;
             string text = string.Empty;
+            ISyntaxObject syntaxObject = null;
             for (int i = 1; i <= Code[Line].Length; i++)
             {
                 text = Code[Line].Substring(0, i);
                 foreach (var element in LexElements)
                 {
-                    if(element.GetKeyword(text) != Keyword.Unknown 
+                    if (element.GetKeyword(text) != Keyword.Unknown
                         && element.GetKeyword(text) != Keyword.LanguageSymbols)
                     {
-                        return element.GetSyntaxScaner();
+                        syntaxObject = element.GetSyntaxScaner();
+                        syntaxObject.Elements[0] = text;
                     }
                 }
             }
-            return null;
+            if(text != string.Empty) return syntaxObject;
+            return new EmptySyntax();
         }
     }
 }
