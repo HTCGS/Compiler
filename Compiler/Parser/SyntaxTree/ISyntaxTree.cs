@@ -8,7 +8,7 @@ namespace Compiler
 {
     interface ISyntaxTree
     {
-        dynamic Answer { get; set; }
+        dynamic Context { get; set; }
         List<ISyntaxTree> Childs { get; }
         dynamic Execute();
     }

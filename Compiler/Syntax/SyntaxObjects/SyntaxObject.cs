@@ -70,5 +70,10 @@ namespace Compiler
             if (line != string.Empty) return SyntaxError.SyntaxError;
             return SyntaxError.NoError;
         }
+
+        public virtual IParserElement GetParser()
+        {
+            return null;
+        }
     }
 }

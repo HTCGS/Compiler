@@ -6,26 +6,27 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class MultiplicationTree : ISyntaxTree
+    class AssignTree : ISyntaxTree
     {
         public dynamic Context { get; set; }
 
         public List<ISyntaxTree> Childs { get; private set; }
 
-        public MultiplicationTree()
+        public AssignTree()
         {
             this.Childs = new List<ISyntaxTree>();
         }
 
-        public MultiplicationTree(ISyntaxTree left, ISyntaxTree right) : this()
+        public AssignTree(string name, ISyntaxTree exp) : this()
         {
-            this.Childs.Add(left);
-            this.Childs.Add(right);
+            this.Context = name;
+            this.Childs.Add(exp);
         }
 
         public dynamic Execute()
         {
-            return Childs[0].Execute() * Childs[1].Execute();
+            Variables.SetVariable(Context ,Childs[0].Execute());
+            return 0;
         }
     }
 }

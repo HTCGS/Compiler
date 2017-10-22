@@ -8,13 +8,18 @@ namespace Compiler
 {
     class EmptySyntax : ISyntaxObject
     {
-        public List<ISyntaxElement> Syntax { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Line { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string[] Elements { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public List<ISyntaxElement> Syntax { get; set; }
+        public string Line { get; set; }
+        public string[] Elements { get; set; }
 
         public SyntaxError Check()
         {
             return SyntaxError.NoError;
+        }
+
+        public IParserElement GetParser()
+        {
+            return null;
         }
     }
 }

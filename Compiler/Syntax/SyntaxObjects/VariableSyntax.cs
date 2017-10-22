@@ -23,5 +23,7 @@ namespace Compiler
         {
             this.Line = line;
         }
+
+
     }
 }

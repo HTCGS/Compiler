@@ -12,12 +12,16 @@ namespace Compiler
         string Line { get; set; }
         string[] Elements { get; set; }
         SyntaxError Check();
+        IParserElement GetParser();
     }
 
     enum SyntaxError
     {
         NoError,
-        SyntaxError
+        SyntaxError,
+        LostBracket,
+        UnnownOperation,
+        UndefinedVariable
 
     }
 }

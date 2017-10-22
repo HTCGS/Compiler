@@ -10,9 +10,9 @@ namespace Compiler
     {
         static void Main(string[] args)
         {
-            VariableLex variableLex = new VariableLex();
             Variables.Boolean.Add("a", true);
             Variables.Boolean.Add("b", true);
+            Variables.Integer.Add("num", 0);
 
 
             VariableSyntax variableSyntax = new VariableSyntax(@"a : = (-1-1  + 2 ) ");
@@ -31,8 +31,16 @@ namespace Compiler
             {
                 ISyntaxObject syntaxObject = lexer.ScanFile();
                 Console.WriteLine(syntaxObject);
+                syntaxObject.Check();
             }
 
+            //ExpressionParser expressionParser = new ExpressionParser("(-b-(-b))-a+2*-a/(-a)");
+            ExpressionParser expressionParser = new ExpressionParser("-a-a-b-b-a-2-b-5");
+            Console.WriteLine(expressionParser.Line);
+            Console.WriteLine(expressionParser.Check());
+            expressionParser.Normalize();
+            Console.WriteLine(expressionParser.Line);
+            Console.WriteLine(expressionParser.Check());
 
 
             Console.ReadKey();

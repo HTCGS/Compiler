@@ -52,6 +52,7 @@ namespace Compiler
                         && element.GetKeyword(text) != Keyword.LanguageSymbols)
                     {
                         syntaxObject = element.GetSyntaxScaner();
+                        syntaxObject.Line = Code[Line];
                         syntaxObject.Elements[0] = text;
                     }
                 }

@@ -27,7 +27,7 @@ namespace Compiler
 
         public SyntaxError Check()
         {
-
+            
 
 
             return SyntaxError.NoError;

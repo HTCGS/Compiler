@@ -8,7 +8,7 @@ namespace Compiler
 {
     class DivisionTree : ISyntaxTree
     {
-        public dynamic Answer { get; set; }
+        public dynamic Context { get; set; }
 
         public List<ISyntaxTree> Childs { get; private set; }
 

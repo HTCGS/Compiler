@@ -12,12 +12,14 @@ namespace Compiler
         public IParser Parser { get; set; }
 
         public List<ISyntaxObject> Syntax { get; set; }
+        public List<ISyntaxTree> Programs { get; set; }
 
         public string FilePath { get; set; }
 
         public Compiler()
         {
             this.Syntax = new List<ISyntaxObject>();
+            this.Programs = new List<ISyntaxTree>();
         }
 
         public Compiler(string filePath) : this()
@@ -66,10 +68,20 @@ namespace Compiler
 
         public void MakeSyntaxTree()
         {
+            ISyntaxTree operation = null;
+
+
+
 
 
         }
 
+
+        public void Run()
+        {
+
+
+        }
 
 
 

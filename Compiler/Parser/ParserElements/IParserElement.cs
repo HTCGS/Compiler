@@ -8,7 +8,9 @@ namespace Compiler
 {
     interface IParserElement
     {
+        string Line { get; set; }
         SyntaxError Check();
         void Normalize();
+        ISyntaxTree GetSyntaxTreeOperation();
     }
 }
