@@ -10,8 +10,8 @@ namespace Compiler
     {
         static void Main(string[] args)
         {
-            Variables.Boolean.Add("a", true);
-            Variables.Boolean.Add("b", true);
+            Variables.Integer.Add("a", 1);
+            Variables.Integer.Add("b", 2);
             Variables.Integer.Add("num", 0);
 
 
@@ -34,13 +34,20 @@ namespace Compiler
                 syntaxObject.Check();
             }
 
-            //ExpressionParser expressionParser = new ExpressionParser("(-b-(-b))-a+2*-a/(-a)");
-            ExpressionParser expressionParser = new ExpressionParser("-a-a-b-b-a-2-b-5");
+            ExpressionParser expressionParser = new ExpressionParser("1*3+4+8");
+            //ExpressionParser expressionParser = new ExpressionParser("(-2)-4");
+            //ExpressionParser expressionParser = new ExpressionParser("(-1)+3*(2/(-2))");
+            //ExpressionParser expressionParser = new ExpressionParser("(-b-(-b))-a+2*a/(-a)");
+            //ExpressionParser expressionParser = new ExpressionParser("(-b-1)"); //error ???
+            //ExpressionParser expressionParser = new ExpressionParser("-a-a-1-a-4-a-b");
             Console.WriteLine(expressionParser.Line);
             Console.WriteLine(expressionParser.Check());
             expressionParser.Normalize();
             Console.WriteLine(expressionParser.Line);
             Console.WriteLine(expressionParser.Check());
+            ISyntaxTree syntaxTree = expressionParser.GetSyntaxTree(expressionParser.Line);
+            Console.WriteLine(syntaxTree.Execute());
+
 
 
             Console.ReadKey();

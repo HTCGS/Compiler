@@ -9,7 +9,7 @@ namespace Compiler
     interface ISyntaxTree
     {
         dynamic Context { get; set; }
-        List<ISyntaxTree> Childs { get; }
+        List<ISyntaxTree> Childs { get; set; }
         dynamic Execute();
     }
 }

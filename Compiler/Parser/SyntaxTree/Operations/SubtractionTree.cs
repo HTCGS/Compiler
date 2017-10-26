@@ -10,7 +10,7 @@ namespace Compiler
     {
         public dynamic Context { get; set; }
 
-        public List<ISyntaxTree> Childs { get; private set; }
+        public List<ISyntaxTree> Childs { get; set; }
 
         public SubtractionTree()
         {

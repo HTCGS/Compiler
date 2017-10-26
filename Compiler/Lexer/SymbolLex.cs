@@ -39,6 +39,7 @@ namespace Compiler
             if (symbol >= 48 && symbol <= 57) return SymbolType.Digit;
             if (symbol == '/' || symbol == '*' || symbol == '-' || symbol == '+') return SymbolType.Arifmetic;
             if (symbol == '(' || symbol == ')') return SymbolType.Bracket;
+            if (symbol == '[' || symbol == ']') return SymbolType.SquareBracket;
             return SymbolType.Punctuation;
         }
 
@@ -54,6 +55,7 @@ namespace Compiler
         Digit,
         Arifmetic,
         Bracket,
+        SquareBracket,
         Punctuation
     }
 }

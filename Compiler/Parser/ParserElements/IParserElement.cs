@@ -11,6 +11,6 @@ namespace Compiler
         string Line { get; set; }
         SyntaxError Check();
         void Normalize();
-        ISyntaxTree GetSyntaxTreeOperation();
+        ISyntaxTree GetSyntaxTree(string text);
     }
 }
