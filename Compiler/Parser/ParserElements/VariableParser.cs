@@ -28,6 +28,7 @@ namespace Compiler
             ISyntaxTree tree = new AssignTree();
             ExpressionParser expressionParser = new ExpressionParser(exp);
             expressionParser.Normalize();
+            exp = expressionParser.Line;
 
             tree.Context = var;
             tree.Childs.Add(expressionParser.GetSyntaxTree(exp));

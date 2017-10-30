@@ -25,5 +25,11 @@ namespace Compiler
             this.Line = line;
         }
 
+        public override IParserElement GetParser()
+        {
+            WritelnParser writelnParser = new WritelnParser();
+            writelnParser.Line = Elements[2];
+            return writelnParser;
+        }
     }
 }

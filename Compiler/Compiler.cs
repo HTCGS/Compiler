@@ -39,7 +39,7 @@ namespace Compiler
             this.Parser = parser;
         }
 
-        public void CodeAnalysis(string filePath = null)
+        public bool CodeAnalysis(string filePath = null)
         {
             Lexer lexer;
             if (filePath != null) lexer = new Lexer(filePath);
@@ -47,7 +47,7 @@ namespace Compiler
             else
             {
                 Console.WriteLine("Code file is undefined!");
-                return;
+                return false;
             }
             lexer.ReadFile(lexer.FilePath);
             foreach (var item in lexer.Code)
@@ -59,32 +59,50 @@ namespace Compiler
                 }
                 else
                 {
-                    Console.WriteLine("Unnown!");
-                    return;
+                    Console.WriteLine("Unnown lex!");
+                    return false;
                 }
             }
+            return true;
+        }
 
+        public SyntaxError CheckSyntax()
+        {
+            int line = 0;
+            foreach (var item in Syntax)
+            {
+                line++;
+                SyntaxError syntaxError;
+                syntaxError = item.Check();
+                if(syntaxError != SyntaxError.NoError)
+                {
+                    Console.WriteLine(syntaxError + " at line " + line);
+                    return syntaxError;
+                }
+            }
+            return SyntaxError.NoError;
         }
 
         public void MakeSyntaxTree()
         {
-            ISyntaxTree operation = null;
-
-
-
-
-
+            Parser.Syntax = this.Syntax;
+            Parser.Check();
+            foreach (var item in Parser.ParserElements)
+            {
+                if( item.Check() == SyntaxError.NoError)
+                {
+                    item.Normalize();
+                }
+                Programs.Add(item.GetSyntaxTree(item.Line));
+            }
         }
-
 
         public void Run()
         {
-
-
+            foreach (var item in Programs)
+            {
+                item.Execute();
+            }
         }
-
-
-
-
     }
 }

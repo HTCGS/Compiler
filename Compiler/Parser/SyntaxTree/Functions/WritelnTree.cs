@@ -19,7 +19,8 @@ namespace Compiler
 
         public dynamic Execute()
         {
-            Console.WriteLine(Context);
+            dynamic output = Variables.GetVariable(Context);
+            Console.WriteLine(output);
             return 0;
         }
     }

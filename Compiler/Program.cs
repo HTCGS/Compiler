@@ -31,30 +31,53 @@ namespace Compiler
             {
                 ISyntaxObject syntaxObject = lexer.ScanFile();
                 Console.WriteLine(syntaxObject);
-                syntaxObject.Check();
+                //syntaxObject.Check();
             }
 
-            ExpressionParser expressionParser = new ExpressionParser("1*3+4+8");
+            //ExpressionParser expressionParser = new ExpressionParser("1*3+4+8");
+            ExpressionParser expressionParser = new ExpressionParser("2+2");
             //ExpressionParser expressionParser = new ExpressionParser("(-2)-4");
             //ExpressionParser expressionParser = new ExpressionParser("(-1)+3*(2/(-2))");
             //ExpressionParser expressionParser = new ExpressionParser("(-b-(-b))-a+2*a/(-a)");
             //ExpressionParser expressionParser = new ExpressionParser("(-b-1)"); //error ???
             //ExpressionParser expressionParser = new ExpressionParser("-a-a-1-a-4-a-b");
-            Console.WriteLine(expressionParser.Line);
-            Console.WriteLine(expressionParser.Check());
-            expressionParser.Normalize();
-            Console.WriteLine(expressionParser.Line);
-            Console.WriteLine(expressionParser.Check());
-            ISyntaxTree syntaxTree = expressionParser.GetSyntaxTree(expressionParser.Line);
-            Console.WriteLine(syntaxTree.Execute());
+            //Console.WriteLine(expressionParser.Line);
+            //Console.WriteLine(expressionParser.Check());
+            //expressionParser.Normalize();
+            //Console.WriteLine(expressionParser.Line);
+            //Console.WriteLine(expressionParser.Check());
+            //ISyntaxTree syntaxTree = expressionParser.GetSyntaxTree(expressionParser.Line);
+            //Console.WriteLine(syntaxTree.Execute());
 
-            VariableParser variableParser = new VariableParser();
-            variableParser.Line = "a 1*3+4+8";
-            variableParser.Check();
-            ISyntaxTree var = variableParser.GetSyntaxTree(variableParser.Line);
-            var.Execute();
+            //VariableParser variableParser = new VariableParser();
+            //variableParser.Line = "a 2";
+            //variableParser.Check();
+            //ISyntaxTree var = variableParser.GetSyntaxTree(variableParser.Line);
+            //var.Execute();
 
-            Console.WriteLine(Variables.GetVariable("a"));
+
+            WriteParser writeParser = new WriteParser();
+            writeParser.GetSyntaxTree("a").Execute();
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("----------------");
+
+
+
+            Compiler compiler = new Compiler(new Lexer(), new Parser());
+            compiler.FilePath = @"..\..\Pascal\test.ps";
+            bool lex = compiler.CodeAnalysis();
+            if (lex)
+            {
+                SyntaxError syntaxError;
+                syntaxError = compiler.CheckSyntax();
+                if (syntaxError == SyntaxError.NoError)
+                {
+                    compiler.MakeSyntaxTree();
+                    compiler.Run();
+                }
+            }
 
 
 

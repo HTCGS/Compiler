@@ -14,10 +14,7 @@ namespace Compiler
 
         public Parser()
         {
-            ParserElements = new List<IParserElement>
-            {
-
-            };
+            ParserElements = new List<IParserElement>();
         }
 
         public Parser(List<ISyntaxObject> syntax ) :this()
@@ -27,10 +24,18 @@ namespace Compiler
 
         public SyntaxError Check()
         {
-            
-
-
+            foreach (ISyntaxObject item in Syntax)
+            {
+                if (!(item is EmptySyntax))
+                {
+                    SyntaxError syntaxError = item.Check();
+                    if (syntaxError != SyntaxError.NoError) return syntaxError;
+                    ParserElements.Add(item.GetParser());
+                }
+            }
             return SyntaxError.NoError;
         }
+
+
     }
 }

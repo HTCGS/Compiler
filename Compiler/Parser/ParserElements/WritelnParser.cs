@@ -17,8 +17,7 @@ namespace Compiler
 
         public ISyntaxTree GetSyntaxTree(string text)
         {
-            dynamic context = Variables.GetVariable(text);
-            return new WritelnTree(context);
+            return new WritelnTree(text);
         }
 
         public void Normalize()

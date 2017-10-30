@@ -111,6 +111,11 @@ namespace Compiler
                     var = string.Empty;
                     arifmetic = false;
 
+                    if(Functions.Count == 0 && i == text.Length -1)
+                    {
+                        exp.Add(OperationAnalyse(Operands, exp, 1));
+                        break;
+                    }
                     if (symbolLex.GetSymbolType(Functions[Functions.Count - 1][0]) != SymbolType.Bracket)
                     {
                         if (Functions.Count > 1)
@@ -128,6 +133,7 @@ namespace Compiler
                                 Operands.RemoveAt(Operands.Count - 1);
                                 Functions.RemoveAt(Functions.Count - 2);
                                 Operands.Add("[" + treeNum + "]");
+                                for (int del = expNum; del > treeNum; del--) exp.RemoveAt(exp.Count - 1);
                                 exp.Insert(treeNum, op);
                                 treeNum++;
                             }
@@ -329,7 +335,7 @@ namespace Compiler
                 {
                     int expNum2 = GetExpressionNum(Operands[Operands.Count - index]);
                     op.Childs.Add(exp[expNum2]);
-                    exp.RemoveAt(expNum2);
+                    //exp.RemoveAt(expNum2);
                     treeNum--;
                 }
             }

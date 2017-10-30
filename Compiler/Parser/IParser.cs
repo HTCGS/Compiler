@@ -8,7 +8,8 @@ namespace Compiler
 {
     interface IParser
     {
-
-
+        List<IParserElement> ParserElements { get; set; }
+        List<ISyntaxObject> Syntax { get; set; }
+        SyntaxError Check();
     }
 }
