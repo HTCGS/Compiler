@@ -10,6 +10,11 @@ namespace Compiler
     {
         public string Line { get; set; }
 
+        public ExpressionParser()
+        {
+
+        }
+
         public ExpressionParser(string line)
         {
             this.Line = line;
@@ -116,30 +121,8 @@ namespace Compiler
                             if (valueNew >= valueLast)
                             {
                                 ISyntaxTree op = GetOperationTree(Functions[Functions.Count - 2][0]);
-                                if (symbolLex.GetSymbolType(Operands[Operands.Count - 2][0]) == SymbolType.Digit)
-                                {
-                                    op.Childs.Add(new ConstTree(Convert.ToInt32(Operands[Operands.Count - 2])));
-                                }
-                                else if (symbolLex.GetSymbolType(Operands[Operands.Count - 2][0]) == SymbolType.SquareBracket)
-                                {
-                                    expNum = GetExpressionNum(Operands[Operands.Count - 2]);
-                                    op.Childs.Add(exp[expNum]);
-                                    treeNum--;
-                                }
-                                else op.Childs.Add(new VariableTree(Operands[Operands.Count - 2]));
-
-                                if (symbolLex.GetSymbolType(Operands[Operands.Count - 1][0]) == SymbolType.Digit)
-                                {
-                                    op.Childs.Add(new ConstTree(Convert.ToInt32(Operands[Operands.Count - 1])));
-                                }
-                                else if (symbolLex.GetSymbolType(Operands[Operands.Count - 1][0]) == SymbolType.SquareBracket)
-                                {
-                                    int expNum2 = GetExpressionNum(Operands[Operands.Count - 1]);
-                                    op.Childs.Add(exp[expNum2]);
-                                    exp.RemoveAt(expNum2);
-                                    treeNum--;
-                                }
-                                else op.Childs.Add(new VariableTree(Operands[Operands.Count - 1]));
+                                CompressOperation(Operands, exp, op, 2, ref treeNum);
+                                CompressOperation(Operands, exp, op, 1, ref treeNum);
 
                                 Operands.RemoveAt(Operands.Count - 1);
                                 Operands.RemoveAt(Operands.Count - 1);
@@ -167,30 +150,8 @@ namespace Compiler
                                 else
                                 {
                                     ISyntaxTree op = GetOperationTree(Functions[Functions.Count - 1][0]);
-                                    if (symbolLex.GetSymbolType(Operands[Operands.Count - 2][0]) == SymbolType.Digit)
-                                    {
-                                        op.Childs.Add(new ConstTree(Convert.ToInt32(Operands[Operands.Count - 2])));
-                                    }
-                                    else if (symbolLex.GetSymbolType(Operands[Operands.Count - 2][0]) == SymbolType.SquareBracket)
-                                    {
-                                        tmpNum = GetExpressionNum(Operands[Operands.Count - 2]);
-                                        op.Childs.Add(exp[tmpNum]);
-                                        treeNum--;
-                                    }
-                                    else op.Childs.Add(new VariableTree(Operands[Operands.Count - 2]));
-
-                                    if (symbolLex.GetSymbolType(Operands[Operands.Count - 1][0]) == SymbolType.Digit)
-                                    {
-                                        op.Childs.Add(new ConstTree(Convert.ToInt32(Operands[Operands.Count - 1])));
-                                    }
-                                    else if (symbolLex.GetSymbolType(Operands[Operands.Count - 1][0]) == SymbolType.SquareBracket)
-                                    {
-                                        int expNum2 = GetExpressionNum(Operands[Operands.Count - 1]);
-                                        op.Childs.Add(exp[expNum2]);
-                                        exp.RemoveAt(expNum2);
-                                        treeNum--;
-                                    }
-                                    else op.Childs.Add(new VariableTree(Operands[Operands.Count - 1]));
+                                    CompressOperation(Operands, exp, op, 2, ref treeNum);
+                                    CompressOperation(Operands, exp, op, 1, ref treeNum);
 
                                     Operands.RemoveAt(Operands.Count - 1);
                                     Operands.RemoveAt(Operands.Count - 1);
@@ -323,7 +284,6 @@ namespace Compiler
             return null;
         }
 
-
         private int GetExpressionNum(string exp)
         {
             string num = string.Empty;
@@ -347,6 +307,34 @@ namespace Compiler
                 return exp[expNum];
             }
             else return new VariableTree(Operands[Operands.Count - index]);
+        }
+
+        private ISyntaxTree CompressOperation(List<string> Operands, List<ISyntaxTree> exp, ISyntaxTree op, int index, ref int treeNum)
+        {
+            int expNum;
+            SymbolLex symbolLex = new SymbolLex();
+            if (symbolLex.GetSymbolType(Operands[Operands.Count - index][0]) == SymbolType.Digit)
+            {
+                op.Childs.Add(new ConstTree(Convert.ToInt32(Operands[Operands.Count - index])));
+            }
+            else if (symbolLex.GetSymbolType(Operands[Operands.Count - index][0]) == SymbolType.SquareBracket)
+            {
+                if (index == 1)
+                {
+                    expNum = GetExpressionNum(Operands[Operands.Count - index]);
+                    op.Childs.Add(exp[expNum]);
+                    treeNum--;
+                }
+                else
+                {
+                    int expNum2 = GetExpressionNum(Operands[Operands.Count - index]);
+                    op.Childs.Add(exp[expNum2]);
+                    exp.RemoveAt(expNum2);
+                    treeNum--;
+                }
+            }
+            else op.Childs.Add(new VariableTree(Operands[Operands.Count - index]));
+            return op;
         }
     }
 }

@@ -51,6 +51,9 @@
     <Compile Include="Parser\ParserElements\ExpressionParser.cs" />
     <Compile Include="Parser\ParserElements\IParserElement.cs" />
     <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\ParserElements\VariableParser.cs" />
+    <Compile Include="Parser\ParserElements\WritelnParser.cs" />
+    <Compile Include="Parser\ParserElements\WriteParser.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\FunctionTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\WritelnTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\WriteTree.cs" />

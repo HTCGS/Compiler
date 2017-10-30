@@ -24,6 +24,11 @@ namespace Compiler
             this.Line = line;
         }
 
-
+        public override IParserElement GetParser()
+        {
+            VariableParser variableParser = new VariableParser();
+            variableParser.Line = Elements[0] + " " + Elements[2];
+            return variableParser;
+        }
     }
 }

@@ -48,6 +48,14 @@ namespace Compiler
             ISyntaxTree syntaxTree = expressionParser.GetSyntaxTree(expressionParser.Line);
             Console.WriteLine(syntaxTree.Execute());
 
+            VariableParser variableParser = new VariableParser();
+            variableParser.Line = "a 1*3+4+8";
+            variableParser.Check();
+            ISyntaxTree var = variableParser.GetSyntaxTree(variableParser.Line);
+            var.Execute();
+
+            Console.WriteLine(Variables.GetVariable("a"));
+
 
 
             Console.ReadKey();

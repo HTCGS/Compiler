@@ -25,5 +25,10 @@ namespace Compiler
             this.Line = line;
         }
 
+        public override IParserElement GetParser()
+        {
+            return base.GetParser();
+        }
+
     }
 }
