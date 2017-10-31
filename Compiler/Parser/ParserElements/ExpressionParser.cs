@@ -335,7 +335,6 @@ namespace Compiler
                 {
                     int expNum2 = GetExpressionNum(Operands[Operands.Count - index]);
                     op.Childs.Add(exp[expNum2]);
-                    //exp.RemoveAt(expNum2);
                     treeNum--;
                 }
             }

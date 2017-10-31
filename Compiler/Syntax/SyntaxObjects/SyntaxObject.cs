@@ -58,8 +58,9 @@ namespace Compiler
                         if (!check)
                         {
                             element = element.Remove(element.Length - 1, 1);
-                            break;
                         }
+                        if (j == line.Length) break;
+                        if (lastCheck && !check) break;
                         lastCheck = check;
                     }
                     if (!check && !lastCheck) return SyntaxError.SyntaxError;

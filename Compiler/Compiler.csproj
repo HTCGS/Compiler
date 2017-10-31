@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Compiler</RootNamespace>
     <AssemblyName>Compiler</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,12 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler.cs" />
+    <Compile Include="Lexer\IfLex.cs" />
     <Compile Include="Lexer\ILexer.cs" />
     <Compile Include="Lexer\Lexer.cs" />
     <Compile Include="Lexer\WriteLex.cs" />
     <Compile Include="Lexer\WritelnLex.cs" />
     <Compile Include="Parser\IParser.cs" />
     <Compile Include="Parser\ParserElements\ExpressionParser.cs" />
+    <Compile Include="Parser\ParserElements\IfParser.cs" />
     <Compile Include="Parser\ParserElements\IParserElement.cs" />
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\ParserElements\VariableParser.cs" />
@@ -62,6 +65,7 @@
     <Compile Include="Parser\SyntaxTree\Operations\AssignTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\ConstTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\DivisionTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Operations\EqualsTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\MultiplicationTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\SubtractionTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\VariableTree.cs" />
@@ -74,6 +78,7 @@
     <Compile Include="Syntax\ISyntaxElement.cs" />
     <Compile Include="Syntax\SymbolSyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\EmptySyntax.cs" />
+    <Compile Include="Syntax\SyntaxObjects\IfSyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\ISyntaxObject.cs" />
     <Compile Include="Lexer\ILexerElement.cs" />
     <Compile Include="Lexer\VariableLex.cs" />
@@ -88,6 +93,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Pascal\test.ps" />
+    <None Include="Pascal\tt.ps" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

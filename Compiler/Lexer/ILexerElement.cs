@@ -17,6 +17,7 @@ namespace Compiler
     {
         Unknown,
         LanguageSymbols,
+        Key,
         Variable,
         Function
     }
