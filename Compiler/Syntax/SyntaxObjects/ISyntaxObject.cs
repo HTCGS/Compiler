@@ -22,6 +22,5 @@ namespace Compiler
         LostBracket,
         UnnownOperation,
         UndefinedVariable
-
     }
 }

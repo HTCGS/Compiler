@@ -60,7 +60,7 @@ namespace Compiler
                             element = element.Remove(element.Length - 1, 1);
                         }
                         if (j == line.Length) break;
-                        if (lastCheck && !check) break;
+                        if (lastCheck && !check && i > line.Length - (Syntax.Count - i - 1)) break;
                         lastCheck = check;
                     }
                     if (!check && !lastCheck) return SyntaxError.SyntaxError;

@@ -17,7 +17,16 @@ namespace Compiler
 
         public ISyntaxTree GetSyntaxTree(string text)
         {
-            return new WriteTree(text);
+            WriteTree tree = new WriteTree();
+            ExpressionParser expressionParser = new ExpressionParser(text);
+            if (expressionParser.Check() == SyntaxError.NoError)
+            {
+                expressionParser.Normalize();
+                tree.Childs.Add(expressionParser.GetSyntaxTree(expressionParser.Line));
+            }
+            else return null;
+            //else tree.Context = text;
+            return tree;
         }
 
         public void Normalize()

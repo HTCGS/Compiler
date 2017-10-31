@@ -92,8 +92,13 @@ namespace Compiler
                 if( item.Check() == SyntaxError.NoError)
                 {
                     item.Normalize();
+                    Programs.Add(item.GetSyntaxTree(item.Line));
                 }
-                Programs.Add(item.GetSyntaxTree(item.Line));
+                else
+                {
+                    Console.WriteLine(item.Check());
+                    return;
+                }
             }
         }
 
@@ -101,7 +106,7 @@ namespace Compiler
         {
             foreach (var item in Programs)
             {
-                item.Execute();
+                if(item != null) item.Execute();
             }
         }
     }

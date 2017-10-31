@@ -12,14 +12,27 @@ namespace Compiler
 
         public List<ISyntaxTree> Childs { get; set; }
 
-        public WritelnTree(dynamic num)
+        public WritelnTree()
+        {
+            this.Childs = new List<ISyntaxTree>();
+        }
+
+        public WritelnTree(dynamic num) :this()
         {
             this.Context = num;
         }
 
         public dynamic Execute()
         {
-            dynamic output = Variables.GetVariable(Context);
+            dynamic output = 0;
+            if (Childs.Count == 0)
+            {
+                output = Variables.GetVariable(Context);
+            }
+            else
+            {
+                output = Childs[0].Execute();
+            }
             Console.WriteLine(output);
             return 0;
         }

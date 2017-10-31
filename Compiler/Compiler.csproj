@@ -93,7 +93,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Pascal\test.ps" />
-    <None Include="Pascal\tt.ps" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

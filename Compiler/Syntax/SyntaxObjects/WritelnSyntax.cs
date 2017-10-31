@@ -14,7 +14,7 @@ namespace Compiler
             {
                 new FunctionIdSyntax("Write", "Writeln"),
                 new BracketSyntax("Bracket", "("),
-                new IdSyntax(),
+                new ExpressionSyntax(),
                 new BracketSyntax("Bracket", ")")
             };
             this.Elements = new string[Syntax.Count];
