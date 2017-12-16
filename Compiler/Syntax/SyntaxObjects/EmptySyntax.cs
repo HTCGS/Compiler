@@ -6,18 +6,25 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class EmptySyntax : ISyntaxObject
+    class EmptySyntax : SyntaxObject
     {
-        public List<ISyntaxElement> Syntax { get; set; }
-        public string Line { get; set; }
-        public string[] Elements { get; set; }
+        public EmptySyntax()
+        {
+            Elements = new string[1];
+            Elements[0] = string.Empty;
+            Syntax = new List<ISyntaxElement>();
+        }
 
-        public SyntaxError Check()
+        public EmptySyntax(string line) : base(line)
+        {
+        }
+
+        public override SyntaxError Check()
         {
             return SyntaxError.NoError;
         }
 
-        public IParserElement GetParser()
+        public override IParserElement GetParser()
         {
             return null;
         }

@@ -6,37 +6,27 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class AssignSyntax : ISyntaxElement
+    class AssignSyntax : AbstractSyntaxElement
     {
-        public string Name { get; set; }
-        public List<string> Sign { get; set; }
-
         public AssignSyntax()
         {
-            this.Name = "";
-            this.Sign = new List<string>();
         }
 
-        public AssignSyntax(string name) :this()
+        public AssignSyntax(string name) : base(name)
         {
-            this.Name = name;
         }
 
-        public AssignSyntax(string name, params string[] signs) : this(name)
+        public AssignSyntax(string name, params string[] signs) : base(name, signs)
         {
-            foreach (string sign in signs)
-            {
-                this.Sign.Add(sign);
-            }
         }
 
-        public bool Check(string input)
+        public override bool Check(string input)
         {
             if (!Sign.Exists(s => s == input)) return false;
             return true;
         }
 
-        public SyntaxType GetSyntaxType()
+        public override SyntaxType GetSyntaxType()
         {
             return SyntaxType.Assign;
         }

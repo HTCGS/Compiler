@@ -16,7 +16,12 @@ namespace Compiler
 
         public SyntaxObject()
         {
+            this.Line = string.Empty;
+        }
 
+        public SyntaxObject(string line)
+        {
+            this.Line = line;
         }
 
         public virtual SyntaxError Check()
@@ -32,16 +37,20 @@ namespace Compiler
                 bool lastCheck = false;
                 if (Syntax[i].Sign.Count != 0)
                 {
+                    string tmpElement = string.Empty;
                     foreach (string item in Syntax[i].Sign)
                     {
                         if (line != string.Empty)
                         {
-                            element = line.Substring(0, item.Length);
+                            if (item.Length <= line.Length)
+                            {
+                                tmpElement = line.Substring(0, item.Length);
+                            }
                         }
-                        check = Syntax[i].Check(element);
-                        if (check) break;
+                        check = Syntax[i].Check(tmpElement);
+                        if (check) element = tmpElement;
                     }
-                    if (!check) return SyntaxError.SyntaxError;
+                    if (element == string.Empty) return SyntaxError.SyntaxError;
                 }
                 else
                 {
@@ -60,7 +69,7 @@ namespace Compiler
                             element = element.Remove(element.Length - 1, 1);
                         }
                         if (j == line.Length) break;
-                        if (lastCheck && !check && i > line.Length - (Syntax.Count - i - 1)) break;
+                        if (lastCheck && !check && j >= line.Length - (Syntax.Count - i - 1)) break;
                         lastCheck = check;
                     }
                     if (!check && !lastCheck) return SyntaxError.SyntaxError;
@@ -68,13 +77,22 @@ namespace Compiler
                 Elements[i] = element;
                 line = line.Remove(0, Elements[i].Length);
             }
-            if (line != string.Empty) return SyntaxError.SyntaxError;
+            if (line != string.Empty && !IsFullSyntax()) return SyntaxError.SyntaxError;
             return SyntaxError.NoError;
         }
 
         public virtual IParserElement GetParser()
         {
             return null;
+        }
+
+        private bool IsFullSyntax()
+        {
+            foreach (string item in Elements)
+            {
+                if (item == string.Empty) return false;
+            }
+            return true;
         }
     }
 }

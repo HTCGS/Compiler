@@ -22,7 +22,9 @@ namespace Compiler
                 new SymbolLex(),
                 new VariableLex(),
                 new WriteLex(),
-                new WritelnLex()
+                new WritelnLex(),
+                new IfLex(),
+                new CommentLex()
             };
             Line = -1;
         }

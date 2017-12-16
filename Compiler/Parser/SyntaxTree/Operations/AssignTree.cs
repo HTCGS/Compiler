@@ -6,24 +6,17 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class AssignTree : ISyntaxTree
+    class AssignTree : AbstractSyntaxTree
     {
-        public dynamic Context { get; set; }
-
-        public List<ISyntaxTree> Childs { get; set; }
-
         public AssignTree()
         {
-            this.Childs = new List<ISyntaxTree>();
         }
 
-        public AssignTree(string name, ISyntaxTree exp) : this()
+        public AssignTree(string name, ISyntaxTree exp) : base(name, exp)
         {
-            this.Context = name;
-            this.Childs.Add(exp);
         }
 
-        public dynamic Execute()
+        public override dynamic Execute()
         {
             Variables.SetVariable(Context ,Childs[0].Execute());
             return 0;

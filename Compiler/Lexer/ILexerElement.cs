@@ -8,7 +8,7 @@ namespace Compiler
 {
     interface ILexerElement
     {
-        string Key { get; }
+        string Key { get; set; }
         Keyword GetKeyword(string input);
         ISyntaxObject GetSyntaxScaner();
     }
@@ -19,6 +19,7 @@ namespace Compiler
         LanguageSymbols,
         Key,
         Variable,
-        Function
+        Function,
+        Comment
     }
 }

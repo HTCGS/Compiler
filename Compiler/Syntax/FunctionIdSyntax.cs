@@ -6,37 +6,27 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class FunctionIdSyntax : ISyntaxElement
+    class FunctionIdSyntax : AbstractSyntaxElement
     {
-        public string Name { get; set; }
-        public List<string> Sign { get; set; }
-
         public FunctionIdSyntax()
         {
-            this.Name = "";
-            this.Sign = new List<string>();
         }
 
-        public FunctionIdSyntax(string name) : this()
+        public FunctionIdSyntax(string name) : base(name)
         {
-            this.Name = name;
         }
 
-        public FunctionIdSyntax(string name, params string[] signs) : this(name)
+        public FunctionIdSyntax(string name, params string[] signs) : base(name, signs)
         {
-            foreach (string sign in signs)
-            {
-                this.Sign.Add(sign);
-            }
         }
 
-        public bool Check(string input)
+        public override bool Check(string input)
         {
             if (!Sign.Exists(str => str == input)) return false;
             return true;
         }
 
-        public SyntaxType GetSyntaxType()
+        public override SyntaxType GetSyntaxType()
         {
             return SyntaxType.Function;
         }

@@ -19,16 +19,15 @@ namespace Compiler
             Elements = new string[Syntax.Count];
         }
 
-        public VariableSyntax(string line) : this()
+        public VariableSyntax(string line) : base(line)
         {
-            this.Line = line;
         }
 
         public override IParserElement GetParser()
         {
-            VariableParser variableParser = new VariableParser();
-            variableParser.Line = Elements[0] + " " + Elements[2];
-            return variableParser;
+            VariableParser parser = new VariableParser();
+            parser.Line = Elements[0] + " " + Elements[2];
+            return parser;
         }
     }
 }

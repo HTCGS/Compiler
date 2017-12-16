@@ -10,9 +10,9 @@ namespace Compiler
     {
         static void Main(string[] args)
         {
-            Variables.Integer.Add("a", 1);
-            Variables.Integer.Add("b", 2);
-            Variables.Integer.Add("num", 0);
+            Variables.Integer.Add("a", 0);
+            Variables.Integer.Add("b", 0);
+            Variables.Integer.Add("num", 10);
 
             Compiler compiler = new Compiler(new Lexer(), new Parser());
             compiler.FilePath = @"..\..\Pascal\test.ps";
@@ -27,13 +27,6 @@ namespace Compiler
                     compiler.Run();
                 }
             }
-
-
-            Console.WriteLine("--------------------");
-
-            //IfSyntax ifsyntax = new IfSyntax("if a = b");
-            //ifsyntax.Elements[0] = "if";
-            //Console.WriteLine(ifsyntax.Check());
 
             Console.ReadKey();
         }

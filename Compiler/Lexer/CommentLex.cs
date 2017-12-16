@@ -6,28 +6,26 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class WriteLex : AbstractLexerElement
+    class CommentLex : AbstractLexerElement
     {
-        public WriteLex()
+        public CommentLex()
         {
-            this.Key = "Write";
+            this.Key = "//";
         }
 
-        public WriteLex(string key) : base(key)
+        public CommentLex(string key) : base(key)
         {
         }
 
         public override Keyword GetKeyword(string input)
         {
-            if (input == Key) return Keyword.Function;
+            if(input == Key) return Keyword.Comment;
             return Keyword.Unknown;
         }
 
         public override ISyntaxObject GetSyntaxScaner()
         {
-            ISyntaxObject syntaxObject = new WriteSyntax();
-            syntaxObject.Elements[0] = this.Key;
-            return syntaxObject;
+            return new EmptySyntax();
         }
     }
 }

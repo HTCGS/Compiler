@@ -6,38 +6,28 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class IdSyntax : ISyntaxElement
+    class IdSyntax : AbstractSyntaxElement
     {
-        public string Name { get; set; }
-        public List<string> Sign { get; set; }
-
         public IdSyntax()
         {
-            this.Name = "";
-            this.Sign = new List<string>();
         }
 
-        public IdSyntax(string name) : this()
+        public IdSyntax(string name) : base(name)
         {
-            this.Name = name;
         }
 
-        public IdSyntax(string name, params string[] signs) :this(name)
+        public IdSyntax(string name, params string[] signs) : base(name, signs)
         {
-            foreach (string sign in signs)
-            {
-                this.Sign.Add(sign);
-            }
         }
 
-        public bool Check(string input)
+        public override bool Check(string input)
         {
             VariableLex variableLex = new VariableLex();
             if (variableLex.GetKeyword(input) == Keyword.Variable) return true;
             return false;
         }
 
-        public SyntaxType GetSyntaxType()
+        public override SyntaxType GetSyntaxType()
         {
             return SyntaxType.ID;
         }

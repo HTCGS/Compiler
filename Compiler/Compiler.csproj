@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compiler.cs" />
+    <Compile Include="Lexer\AbstractLexerElement.cs" />
+    <Compile Include="Lexer\CommentLex.cs" />
     <Compile Include="Lexer\IfLex.cs" />
     <Compile Include="Lexer\ILexer.cs" />
     <Compile Include="Lexer\Lexer.cs" />
@@ -57,6 +59,7 @@
     <Compile Include="Parser\ParserElements\VariableParser.cs" />
     <Compile Include="Parser\ParserElements\WritelnParser.cs" />
     <Compile Include="Parser\ParserElements\WriteParser.cs" />
+    <Compile Include="Parser\SyntaxTree\AbstractSyntaxTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\FunctionTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\WritelnTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\WriteTree.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="Parser\SyntaxTree\Operations\MultiplicationTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\SubtractionTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\VariableTree.cs" />
+    <Compile Include="Syntax\AbstractSyntaxElement.cs" />
     <Compile Include="Syntax\BracketSyntax.cs" />
     <Compile Include="Syntax\ExpressionSyntax.cs" />
     <Compile Include="Lexer\SymbolLex.cs" />

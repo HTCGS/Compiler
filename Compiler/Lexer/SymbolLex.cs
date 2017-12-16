@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class SymbolLex : ILexerElement
+    class SymbolLex : AbstractLexerElement
     {
-        public string Key { get; private set; }
-
         private char[] Symbols = new char[]
         {
             'q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j',
@@ -21,16 +19,24 @@ namespace Compiler
 
         public SymbolLex()
         {
-            this.Key = "Languages symbols";
         }
 
-        public Keyword GetKeyword(string input)
+        public SymbolLex(string key) : base(key)
+        {
+        }
+
+        public override Keyword GetKeyword(string input)
         {
             foreach (char item in input)
             {
                 if (!Array.Exists(Symbols, ch => ch == item)) return Keyword.Unknown;
             }
             return Keyword.LanguageSymbols;
+        }
+
+        public override ISyntaxObject GetSyntaxScaner()
+        {
+            return null;
         }
 
         public SymbolType GetSymbolType(char symbol)
@@ -41,11 +47,6 @@ namespace Compiler
             if (symbol == '(' || symbol == ')') return SymbolType.Bracket;
             if (symbol == '[' || symbol == ']') return SymbolType.SquareBracket;
             return SymbolType.Punctuation;
-        }
-
-        public ISyntaxObject GetSyntaxScaner()
-        {
-            return null;
         }
     }
 

@@ -6,27 +6,24 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class WritelnLex : ILexerElement
+    class WritelnLex : AbstractLexerElement
     {
-        public string Key { get; private set; }
-
         public WritelnLex()
         {
             this.Key = "Writeln";
         }
 
-        public WritelnLex(string key)
+        public WritelnLex(string key) : base(key)
         {
-            this.Key = key;
         }
 
-        public Keyword GetKeyword(string input)
+        public override Keyword GetKeyword(string input)
         {
             if (input == Key) return Keyword.Function;
             return Keyword.Unknown;
         }
 
-        public ISyntaxObject GetSyntaxScaner()
+        public override ISyntaxObject GetSyntaxScaner()
         {
             ISyntaxObject syntaxObject = new WritelnSyntax();
             syntaxObject.Elements[0] = this.Key;

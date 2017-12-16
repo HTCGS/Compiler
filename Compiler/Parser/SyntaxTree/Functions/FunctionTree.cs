@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class FunctionTree : ISyntaxTree
+    class FunctionTree : AbstractSyntaxTree
     {
-        public dynamic Context { get; set; }
-
-        public List<ISyntaxTree> Childs { get; set; }
+        public FunctionTree()
+        {
+        }
 
         public FunctionTree(dynamic num)
         {
             this.Context = num;
         }
 
-        public dynamic Execute()
+        public override dynamic Execute()
         {
             foreach (var child in Childs)
             {

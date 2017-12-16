@@ -41,6 +41,7 @@ namespace Compiler
 
         public bool CodeAnalysis(string filePath = null)
         {
+            int line = 0;
             Lexer lexer;
             if (filePath != null) lexer = new Lexer(filePath);
             else if (this.FilePath != null) lexer = new Lexer(this.FilePath);
@@ -52,6 +53,7 @@ namespace Compiler
             lexer.ReadFile(lexer.FilePath);
             foreach (var item in lexer.Code)
             {
+                line++;
                 ISyntaxObject syntaxObject = lexer.ScanFile();
                 if(syntaxObject != null)
                 {
@@ -59,7 +61,7 @@ namespace Compiler
                 }
                 else
                 {
-                    Console.WriteLine("Unnown lex!");
+                    Console.WriteLine("Unnown lex at line {0}!", line);
                     return false;
                 }
             }

@@ -15,14 +15,15 @@ namespace Compiler
                 new FunctionIdSyntax("Write", "Writeln"),
                 new BracketSyntax("Bracket", "("),
                 new ExpressionSyntax(),
+                //new SymbolSyntax("", "#", "##"),
+                //new SymbolSyntax("", "!")
                 new BracketSyntax("Bracket", ")")
             };
             this.Elements = new string[Syntax.Count];
         }
 
-        public WritelnSyntax(string line) : this()
+        public WritelnSyntax(string line) : base(line)
         {
-            this.Line = line;
         }
 
         public override IParserElement GetParser()

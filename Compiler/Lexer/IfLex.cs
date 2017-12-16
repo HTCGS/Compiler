@@ -6,27 +6,24 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class IfLex : ILexerElement
+    class IfLex : AbstractLexerElement
     {
-        public string Key { get; private set; }
-
         public IfLex()
         {
             this.Key = "if";
         }
 
-        public IfLex(string key)
+        public IfLex(string key) : base(key)
         {
-            this.Key = key;
         }
 
-        public Keyword GetKeyword(string input)
+        public override Keyword GetKeyword(string input)
         {
             if (input == Key) return Keyword.Key;
             return Keyword.Unknown;
         }
 
-        ISyntaxObject ILexerElement.GetSyntaxScaner()
+        public override ISyntaxObject GetSyntaxScaner()
         {
             IfSyntax syntax = new IfSyntax();
             syntax.Elements[0] = this.Key;

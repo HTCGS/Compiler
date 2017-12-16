@@ -6,31 +6,21 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class BracketSyntax : ISyntaxElement
+    class BracketSyntax : AbstractSyntaxElement
     {
-        public string Name { get; set; }
-        public List<string> Sign { get; set; }
-
         public BracketSyntax()
         {
-            this.Name = "";
-            this.Sign = new List<string>();
         }
 
-        public BracketSyntax(string name) : this()
+        public BracketSyntax(string name) : base(name)
         {
-            this.Name = name;
         }
 
-        public BracketSyntax(string name, params string[] signs) : this(name)
+        public BracketSyntax(string name, params string[] signs) : base(name, signs)
         {
-            foreach (string sign in signs)
-            {
-                this.Sign.Add(sign);
-            }
         }
 
-        public bool Check(string input)
+        public override bool Check(string input)
         {
             if (input == "") return false;
             if (Sign.Count != 0)
@@ -51,7 +41,7 @@ namespace Compiler
             return true;
         }
 
-        public SyntaxType GetSyntaxType()
+        public override SyntaxType GetSyntaxType()
         {
             return SyntaxType.Symbol;
         }

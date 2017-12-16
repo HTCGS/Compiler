@@ -6,24 +6,17 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class EqualsTree : ISyntaxTree
+    class EqualsTree : AbstractSyntaxTree
     {
-         public dynamic Context { get; set; }
-
-        public List<ISyntaxTree> Childs { get; set; }
-
         public EqualsTree()
         {
-            this.Childs = new List<ISyntaxTree>();
         }
 
-        public EqualsTree(ISyntaxTree left, ISyntaxTree right) : this()
+        public EqualsTree(ISyntaxTree left, ISyntaxTree right) : base(left, right)
         {
-            this.Childs.Add(left);
-            this.Childs.Add(right);
         }
 
-        public dynamic Execute()
+        public override dynamic Execute()
         {
             //bool equals = false;
             //if (Childs[0].Execute() == Childs[1].Execute()) equals = true;

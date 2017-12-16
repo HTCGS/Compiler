@@ -16,7 +16,7 @@ namespace Compiler
             string exp = Line.Substring(spacePos + 1, Line.Length - spacePos - 1);
 
             ExpressionParser expressionParser = new ExpressionParser(exp);
-             return expressionParser.Check();
+            return expressionParser.Check();
         }
 
         public ISyntaxTree GetSyntaxTree(string text)

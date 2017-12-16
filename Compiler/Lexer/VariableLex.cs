@@ -6,21 +6,17 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class VariableLex : ILexerElement
+    class VariableLex : AbstractLexerElement
     {
-        public string Key { get; private set; }
-
         public VariableLex()
         {
-            this.Key = "Variable";
         }
 
-        public VariableLex(string key)
+        public VariableLex(string key) : base(key)
         {
-            this.Key = key;
         }
 
-        public Keyword GetKeyword(string input)
+        public override Keyword GetKeyword(string input)
         {
             if (Variables.Byte.ContainsKey(input)) return Keyword.Variable;
             if (Variables.Shortint.ContainsKey(input)) return Keyword.Variable;
@@ -36,7 +32,7 @@ namespace Compiler
             return Keyword.Unknown;
         }
 
-        public ISyntaxObject GetSyntaxScaner()
+        public override ISyntaxObject GetSyntaxScaner()
         {
             ISyntaxObject syntaxObject = new VariableSyntax();
             syntaxObject.Elements[0] = this.Key;

@@ -6,31 +6,21 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class ExpressionSyntax : ISyntaxElement
+    class ExpressionSyntax : AbstractSyntaxElement
     {
-        public string Name { get; set; }
-        public List<string> Sign { get; set; }
-
         public ExpressionSyntax()
         {
-            this.Name = "";
-            this.Sign = new List<string>();
         }
 
-        public ExpressionSyntax(string name) : this()
+        public ExpressionSyntax(string name) : base(name)
         {
-            this.Name = name;
         }
 
-        public ExpressionSyntax(string name, params string[] signs) : this(name)
+        public ExpressionSyntax(string name, params string[] signs) : base(name, signs)
         {
-            foreach (string sign in signs)
-            {
-                this.Sign.Add(sign);
-            }
         }
 
-        public bool Check(string input)
+        public override bool Check(string input)
         {
             if (input == "") return false;
             if (Sign.Count != 0)
@@ -60,7 +50,7 @@ namespace Compiler
             return true;
         }
 
-        public SyntaxType GetSyntaxType()
+        public override SyntaxType GetSyntaxType()
         {
             return SyntaxType.Expression;
         }

@@ -20,9 +20,8 @@ namespace Compiler
             this.Elements = new string[Syntax.Count];
         }
 
-        public WriteSyntax(string line) : this()
+        public WriteSyntax(string line) : base(line)
         {
-            this.Line = line;
         }
 
         public override IParserElement GetParser()

@@ -8,7 +8,7 @@ namespace Compiler
 {
     class IfParser : IParserElement
     {
-         public string Line { get; set; }
+        public string Line { get; set; }
 
         public SyntaxError Check()
         {

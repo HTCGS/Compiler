@@ -6,23 +6,18 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class WriteTree : ISyntaxTree
+    class WriteTree : AbstractSyntaxTree
     {
-        public dynamic Context { get; set; }
-
-        public List<ISyntaxTree> Childs { get; set; }
-
         public WriteTree()
         {
-            Childs = new List<ISyntaxTree>();
         }
 
-        public WriteTree(dynamic num) : this()
+        public WriteTree(dynamic num) 
         {
             this.Context = num;
         }
 
-        public dynamic Execute()
+        public override dynamic Execute()
         {
             dynamic output = 0;
             if (Childs.Count == 0)

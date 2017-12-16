@@ -6,24 +6,17 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class DivisionTree : ISyntaxTree
+    class DivisionTree : AbstractSyntaxTree
     {
-        public dynamic Context { get; set; }
-
-        public List<ISyntaxTree> Childs { get; set; }
-
         public DivisionTree()
         {
-            this.Childs = new List<ISyntaxTree>();
         }
 
-        public DivisionTree(ISyntaxTree left, ISyntaxTree right) : this()
+        public DivisionTree(ISyntaxTree left, ISyntaxTree right) : base(left, right)
         {
-            this.Childs.Add(left);
-            this.Childs.Add(right);
         }
 
-        public dynamic Execute()
+        public override dynamic Execute()
         {
             return Childs[0].Execute() / Childs[1].Execute();
         }
