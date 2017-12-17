@@ -32,7 +32,7 @@ namespace Compiler
             }
             else
             {
-                int brackets = 0;
+                //int brackets = 0;
                 SymbolLex symbolLex = new SymbolLex();
                 foreach (char ch in input)
                 {
@@ -42,10 +42,10 @@ namespace Compiler
                         && symbolType != SymbolType.Arifmetic
                         && symbolType != SymbolType.Bracket)
                         return false;
-                    if (ch == '(') brackets++;
-                    if (ch == ')') brackets--;
+                    //if (ch == '(') brackets++;
+                    //if (ch == ')') brackets--;
                 }
-                if (brackets != 0) return false;
+                //if (brackets != 0) return false;
             }
             return true;
         }

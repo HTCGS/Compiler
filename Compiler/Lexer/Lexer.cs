@@ -48,6 +48,7 @@ namespace Compiler
             for (int i = 1; i <= Code[Line].Length; i++)
             {
                 text = Code[Line].Substring(0, i);
+                text = text.Replace(" ", string.Empty);
                 foreach (var element in LexElements)
                 {
                     if (element.GetKeyword(text) != Keyword.Unknown

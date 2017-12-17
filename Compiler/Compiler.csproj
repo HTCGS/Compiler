@@ -60,7 +60,14 @@
     <Compile Include="Parser\ParserElements\WritelnParser.cs" />
     <Compile Include="Parser\ParserElements\WriteParser.cs" />
     <Compile Include="Parser\SyntaxTree\AbstractSyntaxTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Conditions\Arithmetic\EqualTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Conditions\Arithmetic\GreaterOrEqual.cs" />
+    <Compile Include="Parser\SyntaxTree\Conditions\Arithmetic\GreaterTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Conditions\Arithmetic\LessOrEqualTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Conditions\Arithmetic\LessTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Conditions\Arithmetic\NotEqualTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\FunctionTree.cs" />
+    <Compile Include="Parser\SyntaxTree\Functions\IFTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\WritelnTree.cs" />
     <Compile Include="Parser\SyntaxTree\Functions\WriteTree.cs" />
     <Compile Include="Parser\SyntaxTree\ISyntaxTree.cs" />
@@ -73,6 +80,7 @@
     <Compile Include="Parser\SyntaxTree\Operations\SubtractionTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\VariableTree.cs" />
     <Compile Include="Syntax\AbstractSyntaxElement.cs" />
+    <Compile Include="Syntax\ArithmeticCondition.cs" />
     <Compile Include="Syntax\BracketSyntax.cs" />
     <Compile Include="Syntax\ExpressionSyntax.cs" />
     <Compile Include="Lexer\SymbolLex.cs" />

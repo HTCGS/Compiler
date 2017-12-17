@@ -54,25 +54,76 @@ namespace Compiler
                 }
                 else
                 {
-                    if(i == Syntax.Count - 1)
+                    if (i == Syntax.Count - 1)
                     {
                         element = line;
                         check = Syntax[i].Check(element);
                         if (!check) return SyntaxError.SyntaxError;
                     }
-                    for (int j = 1; j <= line.Length; j++)
+                    else
                     {
-                        element = line.Substring(0, j);
-                        check = Syntax[i].Check(element);
-                        if (!check)
+
+                        for (int j = 1; j <= line.Length; j++)
                         {
-                            element = element.Remove(element.Length - 1, 1);
+                            element = line.Substring(0, j);
+                            check = Syntax[i].Check(element);
+                            if (!check)
+                            {
+                                element = element.Remove(element.Length - 1, 1);
+                                break;
+                            }
+
+                            bool nextCheck = false;
+                            if ((i + 1) < Syntax.Count)
+                            {
+                                if (Syntax[i + 1].Sign.Count != 0)
+                                {
+                                    string tmpElement = string.Empty;
+                                    string nextElement = string.Empty;
+                                    foreach (string item in Syntax[i + 1].Sign)
+                                    {
+                                        if (line != string.Empty)
+                                        {
+                                            if (item.Length <= line.Length)
+                                            {
+                                                nextElement = line.Substring(j, item.Length);
+                                            }
+                                        }
+                                        check = Syntax[i + 1].Check(nextElement);
+                                        if (check)
+                                        {
+                                            //if (j >= line.Length - ElementMaxPosition(i + 1) ) //- element.Length -1)
+                                            {
+                                                tmpElement = nextElement;
+                                            }
+                                        }
+                                    }
+                                    if (tmpElement == string.Empty) nextCheck = false;
+                                    else nextCheck = true;
+                                }
+                            }
+                            if (nextCheck) break;
+
+                            if (j >= line.Length - (Syntax.Count - i - 1)) break;
                         }
-                        if (j == line.Length) break;
-                        if (lastCheck && !check && j >= line.Length - (Syntax.Count - i - 1)) break;
-                        lastCheck = check;
                     }
-                    if (!check && !lastCheck) return SyntaxError.SyntaxError;
+
+
+
+
+                    //for (int j = 1; j <= line.Length; j++)
+                    //{
+                    //    element = line.Substring(0, j);
+                    //    check = Syntax[i].Check(element);
+                    //    if (!check)
+                    //    {
+                    //        element = element.Remove(element.Length - 1, 1);
+                    //    }
+                    //    if (j == line.Length) break;
+                    //    if (lastCheck && !check && j >= line.Length - (Syntax.Count - i - 1)) break;
+                    //    lastCheck = check;
+                    //}
+                    //if (!check && !lastCheck) return SyntaxError.SyntaxError;
                 }
                 Elements[i] = element;
                 line = line.Remove(0, Elements[i].Length);
@@ -93,6 +144,25 @@ namespace Compiler
                 if (item == string.Empty) return false;
             }
             return true;
+        }
+
+        private int ElementMaxPosition(int index)
+        {
+            int max = 0;
+            for(int i = index; i< Syntax.Count; i++)
+            {
+                if (Syntax[i].Sign.Count != 0)
+                {
+                    int maxSign = Syntax[i].Sign[0].Length;
+                    foreach (string item in Syntax[i].Sign)
+                    {
+                        if (item.Length > maxSign) maxSign = item.Length;
+                    }
+                    max += maxSign;
+                }
+                else max += 1;
+            }
+            return max;
         }
     }
 }
