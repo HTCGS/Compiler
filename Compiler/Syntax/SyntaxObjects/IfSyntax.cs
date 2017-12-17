@@ -19,7 +19,7 @@ namespace Compiler
                 new SymbolSyntax("", "then"),
                 new IdSyntax(),
                 new AssignSyntax("Assign", ":="),
-                new ExpressionSyntax()
+                new ExpressionSyntax(),
             };
             this.Elements = new string[Syntax.Count];
         }

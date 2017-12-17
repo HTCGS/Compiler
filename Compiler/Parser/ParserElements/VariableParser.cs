@@ -21,17 +21,15 @@ namespace Compiler
 
         public ISyntaxTree GetSyntaxTree(string text)
         {
-            int spacePos = Line.IndexOf(" ");
-            string var = Line.Substring(0, spacePos);
-            string exp = Line.Substring(spacePos + 1, Line.Length - spacePos - 1);
+            string[] elements = text.Split(' ');
 
             ISyntaxTree tree = new AssignTree();
-            ExpressionParser expressionParser = new ExpressionParser(exp);
+            ExpressionParser expressionParser = new ExpressionParser(elements[1]);
             expressionParser.Normalize();
-            exp = expressionParser.Line;
+            elements[1] = expressionParser.Line;
 
-            tree.Context = var;
-            tree.Childs.Add(expressionParser.GetSyntaxTree(exp));
+            tree.Context = elements[0];
+            tree.Childs.Add(expressionParser.GetSyntaxTree(elements[1]));
             return tree;
         }
 

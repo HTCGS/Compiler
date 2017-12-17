@@ -31,9 +31,11 @@ namespace Compiler
                     return false;
             }
             return true;
-                //VariableLex variableLex = new VariableLex();
-                //if (variableLex.GetKeyword(input) == Keyword.Variable) return true;
-                //return false;
+
+
+            //VariableLex variableLex = new VariableLex();
+            //if (variableLex.GetKeyword(input) == Keyword.Variable) return true;
+            //return false;
         }
 
         public override SyntaxType GetSyntaxType()

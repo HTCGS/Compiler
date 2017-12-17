@@ -34,7 +34,6 @@ namespace Compiler
             {
                 string element = "";
                 bool check = false;
-                bool lastCheck = false;
                 if (Syntax[i].Sign.Count != 0)
                 {
                     string tmpElement = string.Empty;
@@ -62,7 +61,6 @@ namespace Compiler
                     }
                     else
                     {
-
                         for (int j = 1; j <= line.Length; j++)
                         {
                             element = line.Substring(0, j);
@@ -107,28 +105,11 @@ namespace Compiler
                             if (j >= line.Length - (Syntax.Count - i - 1)) break;
                         }
                     }
-
-
-
-
-                    //for (int j = 1; j <= line.Length; j++)
-                    //{
-                    //    element = line.Substring(0, j);
-                    //    check = Syntax[i].Check(element);
-                    //    if (!check)
-                    //    {
-                    //        element = element.Remove(element.Length - 1, 1);
-                    //    }
-                    //    if (j == line.Length) break;
-                    //    if (lastCheck && !check && j >= line.Length - (Syntax.Count - i - 1)) break;
-                    //    lastCheck = check;
-                    //}
-                    //if (!check && !lastCheck) return SyntaxError.SyntaxError;
                 }
                 Elements[i] = element;
                 line = line.Remove(0, Elements[i].Length);
             }
-            if (line != string.Empty && !IsFullSyntax()) return SyntaxError.SyntaxError;
+            if (line != string.Empty || !IsFullSyntax()) return SyntaxError.SyntaxError;
             return SyntaxError.NoError;
         }
 
