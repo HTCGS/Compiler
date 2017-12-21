@@ -26,7 +26,7 @@ namespace Compiler
         public override ISyntaxObject GetSyntaxScaner()
         {
             IfSyntax syntax = new IfSyntax();
-            syntax.Elements[0] = this.Key;
+            syntax.Elements.Add(this.Key);
             return syntax;
         }
     }

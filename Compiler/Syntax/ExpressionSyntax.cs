@@ -6,48 +6,59 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class ExpressionSyntax : AbstractSyntaxElement
+    class ExpressionSyntax : AbstractSyntaxObject
     {
         public ExpressionSyntax()
         {
         }
 
-        public ExpressionSyntax(string name) : base(name)
+        public ExpressionSyntax(string context) : base(context)
         {
         }
 
-        public ExpressionSyntax(string name, params string[] signs) : base(name, signs)
+        public ExpressionSyntax(bool isNullable) : base(isNullable)
         {
         }
 
-        public override bool Check(string input)
+        public ExpressionSyntax(string context, params string[] elements) : base(context, elements)
         {
-            if (input == "") return false;
-            if (Sign.Count != 0)
+        }
+
+        public override SyntaxError Check(string context)
+        {
+            this.Context = context;
+            return Check();
+        }
+
+        public override SyntaxError Check()
+        {
+            if (Context == "") return SyntaxError.SyntaxError;
+            if (Elements.Count != 0)
             {
-                foreach (char symbol in input)
+                foreach (char symbol in Context)
                 {
-                    if (!Sign.Contains(symbol.ToString())) return false;
+                    if (!Elements.Contains(symbol.ToString())) return SyntaxError.SyntaxError;
                 }
             }
             else
             {
-                //int brackets = 0;
                 SymbolLex symbolLex = new SymbolLex();
-                foreach (char ch in input)
+                foreach (char ch in Context)
                 {
                     SymbolType symbolType = symbolLex.GetSymbolType(ch);
                     if (symbolType != SymbolType.Digit
                         && symbolType != SymbolType.Letter
                         && symbolType != SymbolType.Arifmetic
                         && symbolType != SymbolType.Bracket)
-                        return false;
-                    //if (ch == '(') brackets++;
-                    //if (ch == ')') brackets--;
+                        return SyntaxError.SyntaxError;
                 }
-                //if (brackets != 0) return false;
             }
-            return true;
+            return SyntaxError.NoError;
+        }
+
+        public override IParserElement GetParser()
+        {
+            return null;
         }
 
         public override SyntaxType GetSyntaxType()

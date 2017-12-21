@@ -10,7 +10,7 @@ namespace Compiler
     {
         public IfSyntax()
         {
-            this.Syntax = new List<ISyntaxElement>
+            this.Syntax = new List<ISyntaxObject>
             {
                 new FunctionIdSyntax("If", "if"),
                 new ExpressionSyntax(),
@@ -20,13 +20,15 @@ namespace Compiler
                 new IdSyntax(),
                 new AssignSyntax("Assign", ":="),
                 new ExpressionSyntax(),
+                new SymbolSyntax("", true, "else"),
+                new IdSyntax(),
+                new AssignSyntax("Assign", ":="),
+                new ExpressionSyntax(),
             };
-            this.Elements = new string[Syntax.Count];
         }
 
-        public IfSyntax(string line) : this()
+        public IfSyntax(string context) : base(context)
         {
-            this.Line = line;
         }
 
         public override IParserElement GetParser()
@@ -35,6 +37,10 @@ namespace Compiler
             parser.Line = Elements[1] + " " + Elements[2]
                 + " " + Elements[3] + " " + Elements[5]
                 + " " + Elements[7];
+            if (this.Elements.Count > 8)
+            {
+                parser.Line += " " + Elements[9] + " " + Elements[11];
+            }
             return parser;
         }
 

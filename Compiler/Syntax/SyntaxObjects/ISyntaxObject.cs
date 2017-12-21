@@ -8,11 +8,29 @@ namespace Compiler
 {
     interface ISyntaxObject
     {
-        List<ISyntaxElement> Syntax { get; set; }
-        string Line { get; set; }
-        string[] Elements { get; set; }
+        List<ISyntaxObject> Syntax { get; set; }
+        string Context { get; set; }
+        List<string> Elements { get; set; }
+        bool IsNullable { get; set; }
+        SyntaxType Type { get; set; }
         SyntaxError Check();
+        SyntaxError Check(string context);
+        SyntaxType GetSyntaxType();
         IParserElement GetParser();
+    }
+
+    enum SyntaxType
+    {
+        SyntaxElement,
+        keyword,
+        ID,
+        Expression,
+        Assign,
+        Function,
+        Symbol,
+        Operand,
+        ArithmeticSymbol,
+        Bracket
     }
 
     enum SyntaxError
@@ -20,7 +38,10 @@ namespace Compiler
         NoError,
         SyntaxError,
         LostBracket,
-        UnnownOperation,
-        UndefinedVariable
+        UnknownOperation,
+        LostOperation,
+        UndefinedVariable,
+        LostOperand,
+        UnknownID
     }
 }

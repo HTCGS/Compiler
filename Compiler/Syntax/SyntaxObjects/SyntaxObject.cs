@@ -6,38 +6,31 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class SyntaxObject : ISyntaxObject
+    class SyntaxObject : AbstractSyntaxObject
     {
-        public List<ISyntaxElement> Syntax { get; set; }
-
-        public string Line { get; set; }
-
-        public string[] Elements { get; set; }
-
         public SyntaxObject()
         {
-            this.Line = string.Empty;
         }
 
-        public SyntaxObject(string line)
+        public SyntaxObject(string context) : base(context)
         {
-            this.Line = line;
         }
 
-        public virtual SyntaxError Check()
+        public override SyntaxError Check()
         {
-            string line = this.Line;
+            string line = this.Context;
             line = line.Replace(" ", string.Empty);
             line = line.Remove(0, Elements[0].Length);
 
             for (int i = 1; i < Syntax.Count; i++)
             {
+                if (line == "" && Syntax[i].IsNullable) break;
                 string element = "";
-                bool check = false;
-                if (Syntax[i].Sign.Count != 0)
+                SyntaxError check = SyntaxError.SyntaxError;
+                if (Syntax[i].Elements.Count != 0)
                 {
                     string tmpElement = string.Empty;
-                    foreach (string item in Syntax[i].Sign)
+                    foreach (string item in Syntax[i].Elements)
                     {
                         if (line != string.Empty)
                         {
@@ -47,9 +40,9 @@ namespace Compiler
                             }
                         }
                         check = Syntax[i].Check(tmpElement);
-                        if (check) element = tmpElement;
+                        if (check == SyntaxError.NoError) element = tmpElement;
                     }
-                    if (element == string.Empty) return SyntaxError.SyntaxError;
+                    if (element == string.Empty) return check;
                 }
                 else
                 {
@@ -57,7 +50,7 @@ namespace Compiler
                     {
                         element = line;
                         check = Syntax[i].Check(element);
-                        if (!check) return SyntaxError.SyntaxError;
+                        if (check != SyntaxError.NoError) return check;
                     }
                     else
                     {
@@ -65,7 +58,7 @@ namespace Compiler
                         {
                             element = line.Substring(0, j);
                             check = Syntax[i].Check(element);
-                            if (!check)
+                            if (check != SyntaxError.NoError)
                             {
                                 element = element.Remove(element.Length - 1, 1);
                                 break;
@@ -74,23 +67,26 @@ namespace Compiler
                             bool nextCheck = false;
                             if ((i + 1) < Syntax.Count)
                             {
-                                if (Syntax[i + 1].Sign.Count != 0)
+                                if (Syntax[i + 1].Elements.Count != 0)
                                 {
                                     string tmpElement = string.Empty;
                                     string nextElement = string.Empty;
-                                    foreach (string item in Syntax[i + 1].Sign)
+                                    foreach (string item in Syntax[i + 1].Elements)
                                     {
                                         if (line != string.Empty)
                                         {
-                                            if (item.Length <= line.Length)
+                                            if (item.Length <= line.Length && j + item.Length < line.Length)
                                             {
                                                 nextElement = line.Substring(j, item.Length);
                                             }
                                         }
                                         check = Syntax[i + 1].Check(nextElement);
-                                        if (check)
+                                        if (check == SyntaxError.NoError)
                                         {
-                                            //if (j >= line.Length - ElementMaxPosition(i + 1) ) //- element.Length -1)
+                                            int from = element.Length + ElementMinPosition(i, i + 1) - 1;
+                                            int to = line.Length - ElementMaxPosition(i + 1);
+                                            if (to != line.Length - 1) from--;
+                                            if (j > from && j <= to)
                                             {
                                                 tmpElement = nextElement;
                                             }
@@ -106,38 +102,61 @@ namespace Compiler
                         }
                     }
                 }
-                Elements[i] = element;
-                line = line.Remove(0, Elements[i].Length);
+                Elements.Add(element);
+                line = line.Remove(0, Elements[Elements.Count - 1].Length);
             }
-            if (line != string.Empty || !IsFullSyntax()) return SyntaxError.SyntaxError;
+            if (line != string.Empty || !IsFulSyntax()) return SyntaxError.SyntaxError;
             return SyntaxError.NoError;
         }
 
-        public virtual IParserElement GetParser()
+        public override SyntaxError Check(string context)
+        {
+            this.Context = context;
+            return Check();
+        }
+
+        public override IParserElement GetParser()
         {
             return null;
         }
 
-        private bool IsFullSyntax()
+        private bool IsFulSyntax()
         {
-            foreach (string item in Elements)
+            if (Elements.Count == Syntax.Count) return true;
+            if (Syntax[Elements.Count].IsNullable) return true;
+            return false;
+        }
+
+        private int ElementMinPosition(int start, int index)
+        {
+            int min = 0;
+            for (int i = start; i < index; i++)
             {
-                if (item == string.Empty) return false;
+                if (Syntax[i].Elements.Count != 0)
+                {
+                    int minSign = Syntax[i].Elements[0].Length;
+                    foreach (string item in Syntax[i].Elements)
+                    {
+                        if (item.Length < minSign) minSign = item.Length;
+                    }
+                    min += minSign;
+                }
+                else min += 1;
             }
-            return true;
+            return min;
         }
 
         private int ElementMaxPosition(int index)
         {
             int max = 0;
-            for(int i = index; i< Syntax.Count; i++)
+            for (int i = index; i < Syntax.Count; i++)
             {
-                if (Syntax[i].Sign.Count != 0)
+                if (Syntax[i].Elements.Count != 0)
                 {
-                    int maxSign = Syntax[i].Sign[0].Length;
-                    foreach (string item in Syntax[i].Sign)
+                    int maxSign = Syntax[i].Elements[0].Length;
+                    foreach (string item in Syntax[i].Elements)
                     {
-                        if (item.Length > maxSign) maxSign = item.Length;
+                        if (item.Length < maxSign) maxSign = item.Length;
                     }
                     max += maxSign;
                 }

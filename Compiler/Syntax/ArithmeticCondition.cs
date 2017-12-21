@@ -6,36 +6,47 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class ArithmeticCondition : AbstractSyntaxElement
+    class ArithmeticCondition : AbstractSyntaxObject
     {
         public ArithmeticCondition()
         {
-            Sign = new List<string>()
+            Elements = new List<string>()
             {
                 "=", "!=", "<", "<=", ">", ">="
             };
         }
 
-        public ArithmeticCondition(string name) : base(name)
+        public ArithmeticCondition(string context) : base(context)
         {
         }
 
-        public ArithmeticCondition(string name, params string[] signs) : base(name, signs)
+        public ArithmeticCondition(string context, params string[] elements) : base(context, elements)
         {
         }
 
-        public override bool Check(string input)
+        public override SyntaxError Check(string context)
         {
-            foreach (string item in Sign)
+            this.Context = context;
+            return Check();
+        }
+
+        public override SyntaxError Check()
+        {
+            foreach (string item in Elements)
             {
-                if (item == input) return true;
+                if (item == Context) return SyntaxError.NoError;
             }
-            return false;
+            return SyntaxError.LostOperation;
+        }
+
+        public override IParserElement GetParser()
+        {
+            return null;
         }
 
         public override SyntaxType GetSyntaxType()
         {
-            return SyntaxType.Symbol;
+            return SyntaxType.ArithmeticSymbol;
         }
     }
 }

@@ -51,12 +51,16 @@ namespace Compiler
                 text = text.Replace(" ", string.Empty);
                 foreach (var element in LexElements)
                 {
-                    if (element.GetKeyword(text) != Keyword.Unknown
-                        && element.GetKeyword(text) != Keyword.LanguageSymbols)
+                    Keyword keyword = element.GetKeyword(text);
+                    if (keyword != Keyword.Unknown
+                        && keyword != Keyword.LanguageSymbols)
                     {
                         syntaxObject = element.GetSyntaxScaner();
-                        syntaxObject.Line = Code[Line];
-                        syntaxObject.Elements[0] = text;
+                        syntaxObject.Context = Code[Line];
+                        if (syntaxObject.Elements.Count == 0)
+                        {
+                            syntaxObject.Elements.Add(text);
+                        }
                     }
                 }
             }

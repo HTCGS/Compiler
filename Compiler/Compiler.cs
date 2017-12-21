@@ -74,8 +74,7 @@ namespace Compiler
             foreach (var item in Syntax)
             {
                 line++;
-                SyntaxError syntaxError;
-                syntaxError = item.Check();
+                SyntaxError syntaxError = item.Check();
                 if(syntaxError != SyntaxError.NoError)
                 {
                     Console.WriteLine(syntaxError + " at line " + line);
@@ -91,14 +90,15 @@ namespace Compiler
             Parser.Check();
             foreach (var item in Parser.ParserElements)
             {
-                if( item.Check() == SyntaxError.NoError)
+                SyntaxError syntaxError = item.Check();
+                if( syntaxError == SyntaxError.NoError)
                 {
                     item.Normalize();
                     Programs.Add(item.GetSyntaxTree(item.Line));
                 }
                 else
                 {
-                    Console.WriteLine(item.Check());
+                    Console.WriteLine(syntaxError);
                     return;
                 }
             }

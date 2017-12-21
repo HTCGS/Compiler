@@ -6,37 +6,51 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class SymbolSyntax : AbstractSyntaxElement
+    class SymbolSyntax : AbstractSyntaxObject
     {
         public SymbolSyntax()
         {
         }
 
-        public SymbolSyntax(string name) : base(name)
+        public SymbolSyntax(string context) : base(context)
         {
         }
 
-        public SymbolSyntax(string name, params string[] signs) : base(name, signs)
+        public SymbolSyntax(string context, params string[] elements) : base(context, elements)
         {
         }
 
-        public override bool Check(string input)
+        public SymbolSyntax(string context, bool isNullable, params string[] elements) : base(context, isNullable, elements)
         {
-            if (input == "") return false;
-            if (Sign.Count != 0)
+        }
+
+        public override SyntaxError Check(string context)
+        {
+            this.Context = context;
+            return Check();
+        }
+
+        public override SyntaxError Check()
+        {
+            if (Context == "") return SyntaxError.SyntaxError;
+            if (Elements.Count != 0)
             {
-                if (!Sign.Contains(input)) return false;
+                if (!Elements.Contains(Context)) return SyntaxError.SyntaxError;
             }
             else
             {
                 SymbolLex symbolLex = new SymbolLex();
-                foreach (char symbol in input)
+                foreach (char symbol in Context)
                 {
-                    if (symbolLex.GetSymbolType(symbol) != SymbolType.Letter) return false;
+                    if (symbolLex.GetSymbolType(symbol) != SymbolType.Letter) return SyntaxError.SyntaxError;
                 }
             }
-            return true;
+            return SyntaxError.NoError;
+        }
 
+        public override IParserElement GetParser()
+        {
+            return null;
         }
 
         public override SyntaxType GetSyntaxType()

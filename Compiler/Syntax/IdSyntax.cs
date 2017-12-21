@@ -6,36 +6,42 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class IdSyntax : AbstractSyntaxElement
+    class IdSyntax : AbstractSyntaxObject
     {
         public IdSyntax()
         {
         }
 
-        public IdSyntax(string name) : base(name)
+        public IdSyntax(string context) : base(context)
         {
         }
 
-        public IdSyntax(string name, params string[] signs) : base(name, signs)
+        public IdSyntax(string context, params string[] elements) : base(context, elements)
         {
         }
 
-        public override bool Check(string input)
+        public override SyntaxError Check(string context)
+        {
+            this.Context = context;
+            return Check();
+        }
+
+        public override SyntaxError Check()
         {
             SymbolLex symbolLex = new SymbolLex();
-            foreach (char ch in input)
+            foreach (char ch in Context)
             {
                 SymbolType symbolType = symbolLex.GetSymbolType(ch);
                 if (symbolType != SymbolType.Digit
                     && symbolType != SymbolType.Letter)
-                    return false;
+                    return SyntaxError.UnknownID;
             }
-            return true;
+            return SyntaxError.NoError;
+        }
 
-
-            //VariableLex variableLex = new VariableLex();
-            //if (variableLex.GetKeyword(input) == Keyword.Variable) return true;
-            //return false;
+        public override IParserElement GetParser()
+        {
+            return null;
         }
 
         public override SyntaxType GetSyntaxType()

@@ -35,7 +35,7 @@ namespace Compiler
         public override ISyntaxObject GetSyntaxScaner()
         {
             ISyntaxObject syntaxObject = new VariableSyntax();
-            syntaxObject.Elements[0] = this.Key;
+            //syntaxObject.Elements.Add(this.Key);
             return syntaxObject;
         }
     }

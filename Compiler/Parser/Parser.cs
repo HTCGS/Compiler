@@ -28,8 +28,8 @@ namespace Compiler
             {
                 if (!(item is EmptySyntax))
                 {
-                    SyntaxError syntaxError = item.Check();
-                    if (syntaxError != SyntaxError.NoError) return syntaxError;
+                    //SyntaxError syntaxError = item.Check();
+                    //if (syntaxError != SyntaxError.NoError) return syntaxError;
                     ParserElements.Add(item.GetParser());
                 }
             }

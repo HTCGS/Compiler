@@ -19,13 +19,17 @@ namespace Compiler
         {
             WritelnTree tree = new WritelnTree();
             ExpressionParser expressionParser = new ExpressionParser(text);
-            if (expressionParser.Check() == SyntaxError.NoError)
+            SyntaxError syntaxError = expressionParser.Check();
+            if (syntaxError == SyntaxError.NoError)
             {
                 expressionParser.Normalize();
                 tree.Childs.Add(expressionParser.GetSyntaxTree(expressionParser.Line));
             }
-            else return null;
-            //else tree.Context = text;
+            else
+            {
+                Console.WriteLine(syntaxError);
+                return null;
+            }
             return tree;
         }
 

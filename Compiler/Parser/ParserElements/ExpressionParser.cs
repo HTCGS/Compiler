@@ -42,7 +42,7 @@ namespace Compiler
                             if (symbolLex.GetSymbolType(Line[i]) == SymbolType.Bracket
                                 && symbolLex.GetSymbolType(Line[i - 1]) == SymbolType.Bracket)
                             {
-                                if (Line[i] != Line[i - 1]) return SyntaxError.UnnownOperation;
+                                if (Line[i] != Line[i - 1]) return SyntaxError.UnknownOperation;
                             }
                         }
                     }
@@ -54,7 +54,7 @@ namespace Compiler
                     if (var != string.Empty)
                     {
                         if (symbolLex.GetSymbolType(var[var.Length - 1]) == SymbolType.Arifmetic)
-                            return SyntaxError.UnnownOperation;
+                            return SyntaxError.UnknownOperation;
 
                         if (symbolLex.GetSymbolType(var[0]) == SymbolType.Digit)
                         {
@@ -71,14 +71,14 @@ namespace Compiler
                     }
                     else
                     {
-                        if (i == Line.Length - 1) return SyntaxError.UnnownOperation;
+                        if (i == Line.Length - 1) return SyntaxError.UnknownOperation;
                         if (i != 0)
                         {
-                            if (symbolLex.GetSymbolType(Line[i - 1]) == SymbolType.Arifmetic) return SyntaxError.UnnownOperation;
+                            if (symbolLex.GetSymbolType(Line[i - 1]) == SymbolType.Arifmetic) return SyntaxError.UnknownOperation;
                         }
                         else
                         {
-                            if (symbolLex.GetSymbolType(Line[i + 1]) == SymbolType.Bracket) return SyntaxError.UnnownOperation;
+                            if (symbolLex.GetSymbolType(Line[i + 1]) == SymbolType.Bracket) return SyntaxError.UnknownOperation;
                         }
                     }
                     arifmetic = false;

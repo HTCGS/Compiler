@@ -6,24 +6,35 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class AssignSyntax : AbstractSyntaxElement
+    class AssignSyntax : AbstractSyntaxObject
     {
         public AssignSyntax()
         {
         }
 
-        public AssignSyntax(string name) : base(name)
+        public AssignSyntax(string context) : base(context)
         {
         }
 
-        public AssignSyntax(string name, params string[] signs) : base(name, signs)
+        public AssignSyntax(string context, params string[] elements) : base(context, elements)
         {
         }
 
-        public override bool Check(string input)
+        public override SyntaxError Check(string context)
         {
-            if (!Sign.Exists(s => s == input)) return false;
-            return true;
+            this.Context = context;
+            return Check();
+        }
+
+        public override SyntaxError Check()
+        {
+            if (!Elements.Exists(s => s == Context)) return SyntaxError.LostOperation;
+            return SyntaxError.NoError;
+        }
+
+        public override IParserElement GetParser()
+        {
+            return null;
         }
 
         public override SyntaxType GetSyntaxType()

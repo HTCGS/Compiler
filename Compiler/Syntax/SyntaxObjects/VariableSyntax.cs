@@ -10,16 +10,15 @@ namespace Compiler
     {
         public VariableSyntax()
         {
-            Syntax = new List<ISyntaxElement>
+            Syntax = new List<ISyntaxObject>
             {
                 new IdSyntax(),
                 new AssignSyntax("Assign", ":="),
                 new ExpressionSyntax("Expression")
             };
-            Elements = new string[Syntax.Count];
         }
 
-        public VariableSyntax(string line) : base(line)
+        public VariableSyntax(string context) : base(context)
         {
         }
 

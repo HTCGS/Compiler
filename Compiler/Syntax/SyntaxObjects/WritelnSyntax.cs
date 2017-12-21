@@ -10,19 +10,16 @@ namespace Compiler
     {
         public WritelnSyntax()
         {
-            this.Syntax = new List<ISyntaxElement>
+            this.Syntax = new List<ISyntaxObject>
             {
                 new FunctionIdSyntax("Write", "Writeln"),
                 new BracketSyntax("Bracket", "("),
-                new ExpressionSyntax(),
-                //new SymbolSyntax("", "#", "##"),
-                //new SymbolSyntax("", "!")
+                new ExpressionSyntax(true),
                 new BracketSyntax("Bracket", ")")
             };
-            this.Elements = new string[Syntax.Count];
         }
 
-        public WritelnSyntax(string line) : base(line)
+        public WritelnSyntax(string context) : base(context)
         {
         }
 

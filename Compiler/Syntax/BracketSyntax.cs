@@ -6,44 +6,55 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class BracketSyntax : AbstractSyntaxElement
+    class BracketSyntax : AbstractSyntaxObject
     {
         public BracketSyntax()
         {
         }
 
-        public BracketSyntax(string name) : base(name)
+        public BracketSyntax(string context) : base(context)
         {
         }
 
-        public BracketSyntax(string name, params string[] signs) : base(name, signs)
+        public BracketSyntax(string context, params string[] elements) : base(context, elements)
         {
         }
 
-        public override bool Check(string input)
+        public override SyntaxError Check(string context)
         {
-            if (input == "") return false;
-            if (Sign.Count != 0)
+            this.Context = context;
+            return Check();
+        }
+
+        public override SyntaxError Check()
+        {
+            if (Context == "") return SyntaxError.LostBracket;
+            if (Elements.Count != 0)
             {
-                foreach (char symbol in input)
+                foreach (char symbol in Context)
                 {
-                    if (!Sign.Contains(symbol.ToString())) return false;
+                    if (!Elements.Contains(symbol.ToString())) return SyntaxError.LostBracket;
                 }
             }
             else
             {
                 SymbolLex symbolLex = new SymbolLex();
-                foreach (char symbol in input)
+                foreach (char symbol in Context)
                 {
-                    if (symbolLex.GetSymbolType(symbol) != SymbolType.Bracket) return false;
+                    if (symbolLex.GetSymbolType(symbol) != SymbolType.Bracket) return SyntaxError.LostBracket;
                 }
             }
-            return true;
+            return SyntaxError.NoError;
+        }
+
+        public override IParserElement GetParser()
+        {
+            return null;
         }
 
         public override SyntaxType GetSyntaxType()
         {
-            return SyntaxType.Symbol;
+            return SyntaxType.Bracket;
         }
     }
 }

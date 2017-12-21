@@ -27,6 +27,18 @@ namespace Compiler
             blockTrue.Context = elements[3];
             blockTrue.Childs.Add(expressionParser.GetSyntaxTree(elements[4]));
 
+            ISyntaxTree blockFalse = new AssignTree();
+            if (elements.Length > 5)
+            {
+                expressionParser.Line = elements[6];
+                expressionParser.Normalize();
+                elements[6] = expressionParser.Line;
+
+                blockFalse.Context = elements[5];
+                blockFalse.Childs.Add(expressionParser.GetSyntaxTree(elements[6]));
+            }
+            else blockFalse = null;
+
             expressionParser.Line = elements[0];
             expressionParser.Normalize();
             elements[0] = expressionParser.Line;
@@ -43,7 +55,7 @@ namespace Compiler
             condition.Childs.Add(leftOp);
             condition.Childs.Add(rightOp);
 
-            ISyntaxTree tree = new IFTree(blockTrue, null);
+            ISyntaxTree tree = new IFTree(blockTrue, blockFalse);
             tree.Childs.Add(condition);
             return tree;
         }
