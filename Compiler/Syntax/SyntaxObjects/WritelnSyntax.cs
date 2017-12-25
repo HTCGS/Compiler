@@ -15,7 +15,7 @@ namespace Compiler
                 new FunctionIdSyntax("Write", "Writeln"),
                 new BracketSyntax("Bracket", "("),
                 new ExpressionSyntax(true),
-                new BracketSyntax("Bracket", ")")
+                new BracketSyntax("Bracket", ")"),
             };
         }
 

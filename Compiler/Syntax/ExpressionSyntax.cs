@@ -33,11 +33,11 @@ namespace Compiler
         public override SyntaxError Check()
         {
             if (Context == "") return SyntaxError.SyntaxError;
-            if (Elements.Count != 0)
+            if (Elements.SignCount != 0)
             {
                 foreach (char symbol in Context)
                 {
-                    if (!Elements.Contains(symbol.ToString())) return SyntaxError.SyntaxError;
+                    if (!Elements.HasSign(symbol.ToString())) return SyntaxError.SyntaxError;
                 }
             }
             else

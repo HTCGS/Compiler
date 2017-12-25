@@ -14,16 +14,16 @@ namespace Compiler
             {
                 new FunctionIdSyntax("If", "if"),
                 new ExpressionSyntax(),
-                new ArithmeticCondition(),
+                new ArithmeticConditionSymbol(),
                 new ExpressionSyntax(),
                 new SymbolSyntax("", "then"),
                 new IdSyntax(),
                 new AssignSyntax("Assign", ":="),
                 new ExpressionSyntax(),
-                new SymbolSyntax("", true, "else"),
-                new IdSyntax(),
-                new AssignSyntax("Assign", ":="),
-                new ExpressionSyntax(),
+                //new SymbolSyntax("", true, "else"),
+                //new IdSyntax(),
+                //new AssignSyntax("Assign", ":="),
+                //new ExpressionSyntax(),
             };
         }
 
@@ -37,7 +37,7 @@ namespace Compiler
             parser.Line = Elements[1] + " " + Elements[2]
                 + " " + Elements[3] + " " + Elements[5]
                 + " " + Elements[7];
-            if (this.Elements.Count > 8)
+            if (this.Elements.ElementCount > 8)
             {
                 parser.Line += " " + Elements[9] + " " + Elements[11];
             }

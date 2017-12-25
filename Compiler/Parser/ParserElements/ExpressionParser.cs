@@ -98,6 +98,7 @@ namespace Compiler
             int treeNum = 0;
             bool arifmetic = false;
             string var = string.Empty;
+            if (text == string.Empty) exp.Add(new ConstTree(""));
             for (int i = 0; i < text.Length; i++)
             {
                 if (symbolLex.GetSymbolType(text[i]) != SymbolType.Arifmetic

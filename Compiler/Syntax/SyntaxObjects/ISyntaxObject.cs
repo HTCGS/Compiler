@@ -10,7 +10,7 @@ namespace Compiler
     {
         List<ISyntaxObject> Syntax { get; set; }
         string Context { get; set; }
-        List<string> Elements { get; set; }
+        SyntaxElement Elements { get; set; }
         bool IsNullable { get; set; }
         SyntaxType Type { get; set; }
         SyntaxError Check();

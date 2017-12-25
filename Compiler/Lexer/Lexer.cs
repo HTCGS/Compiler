@@ -57,7 +57,7 @@ namespace Compiler
                     {
                         syntaxObject = element.GetSyntaxScaner();
                         syntaxObject.Context = Code[Line];
-                        if (syntaxObject.Elements.Count == 0)
+                        if (syntaxObject.Elements.ElementCount == 0)
                         {
                             syntaxObject.Elements.Add(text);
                         }

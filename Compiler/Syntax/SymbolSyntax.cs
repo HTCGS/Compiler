@@ -33,9 +33,9 @@ namespace Compiler
         public override SyntaxError Check()
         {
             if (Context == "") return SyntaxError.SyntaxError;
-            if (Elements.Count != 0)
+            if (Elements.SignCount != 0)
             {
-                if (!Elements.Contains(Context)) return SyntaxError.SyntaxError;
+                if (!Elements.HasSign(Context)) return SyntaxError.SyntaxError;
             }
             else
             {

@@ -28,7 +28,7 @@ namespace Compiler
 
         public override SyntaxError Check()
         {
-            if (!Elements.Exists(str => str == Context)) return SyntaxError.SyntaxError;
+            if (!Elements.HasSign(Context)) return SyntaxError.SyntaxError;
             return SyntaxError.NoError;
 
         }
