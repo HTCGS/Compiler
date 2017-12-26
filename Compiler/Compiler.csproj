@@ -79,8 +79,10 @@
     <Compile Include="Parser\SyntaxTree\Operations\MultiplicationTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\SubtractionTree.cs" />
     <Compile Include="Parser\SyntaxTree\Operations\VariableTree.cs" />
+    <Compile Include="Syntax\AnySyntaxObject.cs" />
     <Compile Include="Syntax\ArithmeticConditionSymbol.cs" />
     <Compile Include="Syntax\BracketSyntax.cs" />
+    <Compile Include="Syntax\ElseBlockSyntax.cs" />
     <Compile Include="Syntax\ExpressionSyntax.cs" />
     <Compile Include="Lexer\SymbolLex.cs" />
     <Compile Include="Syntax\AssignSyntax.cs" />

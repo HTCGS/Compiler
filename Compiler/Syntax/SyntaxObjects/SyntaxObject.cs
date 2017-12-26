@@ -8,11 +8,17 @@ namespace Compiler
 {
     class SyntaxObject : AbstractSyntaxObject
     {
+        private int lastNullableIndex = -1; // if -1 syntax doesnt have nullables
+
         public SyntaxObject()
         {
         }
 
         public SyntaxObject(string context) : base(context)
+        {
+        }
+
+        public SyntaxObject(bool isNullable) : base(isNullable)
         {
         }
 
@@ -32,65 +38,85 @@ namespace Compiler
             SyntaxError check = SyntaxError.SyntaxError;
             for (i = startIndex; i < Syntax.Count; i++)
             {
-                if (line == "" && Syntax[i].IsNullable) break;
                 string element = "";
-                if (Syntax[i].Elements.SignCount != 0)
+                if (Syntax[i] is SyntaxObject)
                 {
-                    string tmpElement = string.Empty;
-                    foreach (string item in Syntax[i].Elements)
-                    {
-                        if (line != string.Empty)
-                        {
-                            if (item.Length <= line.Length)
-                            {
-                                tmpElement = line.Substring(0, item.Length);
-                            }
-                        }
-                        check = Syntax[i].Check(tmpElement);
-                        if (check == SyntaxError.NoError) element = tmpElement;
-                    }
-                    if (element == string.Empty) break;
+                    check = Syntax[i].Check(line);
+                    if (check != SyntaxError.NoError) break;
                 }
                 else
                 {
-                    if (i == Syntax.Count - 1)
+                    if (Syntax[i].Elements.SignCount != 0)
                     {
-                        element = line;
-                        check = Syntax[i].Check(element);
-                        if (check != SyntaxError.NoError) break;
+                        string tmpElement = string.Empty;
+                        foreach (string item in Syntax[i].Elements)
+                        {
+                            if (line != string.Empty)
+                            {
+                                if (item.Length <= line.Length)
+                                {
+                                    tmpElement = line.Substring(0, item.Length);
+                                }
+                            }
+                            check = Syntax[i].Check(tmpElement);
+                            if (check == SyntaxError.NoError) element = tmpElement;
+                        }
+                        if (element == string.Empty) break;
                     }
                     else
                     {
-                        bool isFound = false;
-                        for (int j = 1; j <= line.Length; j++)
+                        if (i == Syntax.Count - 1)
                         {
-                            element = line.Substring(0, j);
+                            element = line;
                             check = Syntax[i].Check(element);
-                            if (check != SyntaxError.NoError)
+                            if (check != SyntaxError.NoError) break;
+                        }
+                        else
+                        {
+                            bool isFound = false;
+                            for (int j = 1; j <= line.Length; j++)
                             {
-                                element = element.Remove(element.Length - 1, 1);
+                                element = line.Substring(0, j);
+                                check = Syntax[i].Check(element);
+                                if (check != SyntaxError.NoError)
+                                {
+                                    element = element.Remove(element.Length - 1, 1);
+                                    break;
+                                }
+
+                                if ((i + 1) < Syntax.Count)
+                                {
+                                    if (Syntax[i + 1] is SyntaxObject)
+                                    {
+                                        string nextLine = line.Substring(element.Length, line.Length - element.Length);
+                                        if (Syntax[i + 1].Check(nextLine) != SyntaxError.NoError) isFound = false;
+                                        else isFound = true;
+                                        (Syntax[i + 1] as SyntaxObject).ClearElements();
+                                    }
+                                    else
+                                    {
+                                        if (Syntax[i + 1].Elements.SignCount != 0)
+                                        {
+                                            isFound = CheckNext(line, j, i + 1, element);
+                                        }
+                                    }
+                                }
+                                if (isFound) break;
+                                if (j >= line.Length - (Syntax.Count - i - 1)) break;
+                            }
+                            if (!isFound)
+                            {
+                                check = SyntaxError.SyntaxError;
                                 break;
                             }
-
-                            if ((i + 1) < Syntax.Count)
-                            {
-                                if (Syntax[i + 1].Elements.SignCount != 0)
-                                {
-                                    isFound = CheckNext(line, j, i + 1, element);
-                                }
-                            }
-                            if (isFound) break;
-                            if (j >= line.Length - (Syntax.Count - i - 1)) break;
-                        }
-                        if (!isFound)
-                        {
-                            check = SyntaxError.SyntaxError;
-                            break;
                         }
                     }
                 }
                 if (Syntax[i] is SyntaxObject) Elements.Add(Syntax[i] as SyntaxObject);
-                if (Syntax[i] is AbstractSyntaxObject) Elements.Add(element);
+                else
+                {
+                    if (Syntax[i] is AbstractSyntaxObject) Elements.Add(element);
+                }
                 line = line.Remove(0, Elements[Elements.ElementCount - 1].Length);
             }
 
@@ -100,9 +126,10 @@ namespace Compiler
                 syntaxObject.Context = this.Context;
                 syntaxObject.Syntax.Clear();
                 syntaxObject.Syntax.AddRange(this.Syntax);
-                if (Syntax[i].IsNullable)
+                int nullablePos = GetNextNullableElement();
+                if (nullablePos != -1)
                 {
-                    syntaxObject.Syntax.RemoveAt(i);
+                    syntaxObject.Syntax.RemoveAt(nullablePos);
                     check = syntaxObject.Check();
                     if (check == SyntaxError.NoError)
                     {
@@ -132,7 +159,7 @@ namespace Compiler
         private bool IsFulSyntax()
         {
             if (Elements.ElementCount == Syntax.Count) return true;
-            if (Syntax[Elements.ElementCount].IsNullable) return true;
+            //if (Syntax[Elements.ElementCount].IsNullable) return true;
             return false;
         }
 
@@ -202,16 +229,54 @@ namespace Compiler
             this.Elements.Elements.Clear();
             for (int i = 0; i < Syntax.Count; i++)
             {
-                if(this.Syntax[i].GetType() == newObject.Syntax[newPos].GetType())
+                if (i < newObject.Syntax.Count)
                 {
-                    Elements.Add(newObject.Elements[newPos]);
-                    newPos++;
+                    if (this.Syntax[i].GetType() == newObject.Syntax[newPos].GetType())
+                    {
+                        Elements.Add(newObject.Elements[newPos]);
+                        newPos++;
+                    }
+                    else
+                    {
+                        Elements.Add("");
+                    }
                 }
-                else
+                else Elements.Add("");
+            }
+        }
+
+        private int GetNextNullableElement()
+        {
+            int start = 0;
+            if (lastNullableIndex != -1)
+            {
+                start = lastNullableIndex;
+            }
+            for (int i = start; i < Syntax.Count; i++)
+            {
+                if (Syntax[i].IsNullable)
                 {
-                    Elements.Add("");
+                    lastNullableIndex = i;
+                    return lastNullableIndex;
                 }
             }
+            lastNullableIndex = -1;
+            return lastNullableIndex;
+        }
+
+        public void ClearElements()
+        {
+            foreach (var item in Elements.Elements)
+            {
+                if(!item.HasValue)
+                {
+                    if(item.ElementReference != null)
+                    {
+                        item.ElementReference.ClearElements();
+                    }
+                }
+            }
+            Elements.Elements.Clear();
         }
     }
 }

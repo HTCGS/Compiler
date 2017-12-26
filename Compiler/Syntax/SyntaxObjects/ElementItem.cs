@@ -21,7 +21,8 @@ namespace Compiler
         public ElementItem(string element) :this()
         {
             this.Element = element;
-            this.HasValue = true;
+            if (element != "") this.HasValue = true;
+            else this.HasValue = false;
         }
 
         public ElementItem(SyntaxObject syntaxObject) : this()

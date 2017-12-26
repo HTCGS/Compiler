@@ -8,6 +8,7 @@ namespace Compiler
 {
     interface IParserElement
     {
+        //SyntaxElement Line { get; set; }
         string Line { get; set; }
         SyntaxError Check();
         void Normalize();

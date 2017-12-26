@@ -11,20 +11,8 @@ namespace Compiler
         public List<string> Signs { get; set; }
         public List<ElementItem> Elements { get; set; }
 
-        public int SignCount {
-            get
-            {
-                return Signs.Count;
-            }
-        }
-
-        public int ElementCount
-        {
-            get
-            {
-                return Elements.Count;
-            }
-        }
+        public int SignCount => Signs.Count;
+        public int ElementCount => Elements.Count;
 
         public SyntaxElement()
         {
@@ -32,7 +20,7 @@ namespace Compiler
             Signs = new List<string>();
         }
 
-        public SyntaxElement(string[] elements) :this()
+        public SyntaxElement(string[] elements) : this()
         {
             this.Signs.AddRange(elements);
         }
@@ -41,12 +29,17 @@ namespace Compiler
         {
             get
             {
-                if(Elements.Count > index)
+                if (Elements.Count > index)
                 {
-                    if(Elements[index].HasValue)
+                    if (Elements[index].HasValue)
                     {
                         return Elements[index].Element;
                     }
+                    if (Elements[index].ElementReference == null)
+                    {
+                        return string.Empty;
+                    }
+                    return Elements[index].ElementReference.Context;
                 }
                 return null;
             }

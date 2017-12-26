@@ -17,6 +17,7 @@ namespace Compiler
         public AbstractSyntaxObject()
         {
             this.Context = string.Empty;
+            this.Syntax = new List<ISyntaxObject>();
             this.Elements = new SyntaxElement();
             this.IsNullable = false;
             this.Type = SyntaxType.SyntaxElement;

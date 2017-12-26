@@ -20,10 +20,8 @@ namespace Compiler
                 new IdSyntax(),
                 new AssignSyntax("Assign", ":="),
                 new ExpressionSyntax(),
-                //new SymbolSyntax("", true, "else"),
-                //new IdSyntax(),
-                //new AssignSyntax("Assign", ":="),
-                //new ExpressionSyntax(),
+                //new VariableSyntax(),
+                new ElseBlockSyntax(true)
             };
         }
 
@@ -34,13 +32,14 @@ namespace Compiler
         public override IParserElement GetParser()
         {
             IfParser parser = new IfParser();
-            parser.Line = Elements[1] + " " + Elements[2]
-                + " " + Elements[3] + " " + Elements[5]
-                + " " + Elements[7];
-            if (this.Elements.ElementCount > 8)
-            {
-                parser.Line += " " + Elements[9] + " " + Elements[11];
-            }
+            //parser.Line = Elements[1] + " " + Elements[2]
+            //    + " " + Elements[3] + " " + Elements[5]
+            //    + " " + Elements[7];
+            //if (this.Elements.ElementCount > 8)
+            //{
+            //    parser.Line += " " + Elements[9] + " " + Elements[11];
+            //}
+            parser.Line = "";
             return parser;
         }
 

@@ -22,6 +22,10 @@ namespace Compiler
         {
         }
 
+        public VariableSyntax(bool isNullable) : base(isNullable)
+        {
+        }
+
         public override IParserElement GetParser()
         {
             VariableParser parser = new VariableParser();
