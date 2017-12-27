@@ -90,7 +90,11 @@ namespace Compiler
 
         public abstract SyntaxError Check();
         public abstract SyntaxError Check(string context);
-        public abstract IParserElement GetParser();
+
+        public virtual IParserElement GetParser()
+        {
+            return null;
+        }
 
         public virtual SyntaxType GetSyntaxType()
         {

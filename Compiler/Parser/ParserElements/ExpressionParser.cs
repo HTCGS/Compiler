@@ -8,16 +8,27 @@ namespace Compiler
 {
     class ExpressionParser : IParserElement
     {
-        public string Line { get; set; }
+        public List<ElementItem> Line { get; set; }
+        private string Context { get { return Line[0].Element; } set { Line[0].Element = value; } }
 
         public ExpressionParser()
         {
-
+            Line = new List<ElementItem>();
         }
 
-        public ExpressionParser(string line)
+        public ExpressionParser(List<ElementItem> line)
         {
             this.Line = line;
+        }
+
+        public ExpressionParser(ElementItem line) : this()
+        {
+            this.Line.Add(line);
+        }
+
+        public ExpressionParser(string line) :this()
+        {
+            Line.Add(new ElementItem(line));
         }
 
         public SyntaxError Check()
@@ -27,22 +38,22 @@ namespace Compiler
             int brackets = 0;
             string var = string.Empty;
             bool arifmetic = false;
-            for (int i = 0; i < Line.Length; i++)
+            for (int i = 0; i < Context.Length; i++)
             {
-                if (Line[i] == '(') brackets++;
-                if (Line[i] == ')') brackets--;
+                if (Context[i] == '(') brackets++;
+                if (Context[i] == ')') brackets--;
 
-                if (symbolLex.GetSymbolType(Line[i]) != SymbolType.Arifmetic)
+                if (symbolLex.GetSymbolType(Context[i]) != SymbolType.Arifmetic)
                 {
-                    if (Line[i] != '(' && Line[i] != ')') var += Line[i];
+                    if (Context[i] != '(' && Context[i] != ')') var += Context[i];
                     else
                     {
                         if (i != 0)
                         {
-                            if (symbolLex.GetSymbolType(Line[i]) == SymbolType.Bracket
-                                && symbolLex.GetSymbolType(Line[i - 1]) == SymbolType.Bracket)
+                            if (symbolLex.GetSymbolType(Context[i]) == SymbolType.Bracket
+                                && symbolLex.GetSymbolType(Context[i - 1]) == SymbolType.Bracket)
                             {
-                                if (Line[i] != Line[i - 1]) return SyntaxError.UnknownOperation;
+                                if (Context[i] != Context[i - 1]) return SyntaxError.UnknownOperation;
                             }
                         }
                     }
@@ -71,14 +82,14 @@ namespace Compiler
                     }
                     else
                     {
-                        if (i == Line.Length - 1) return SyntaxError.UnknownOperation;
+                        if (i == Context.Length - 1) return SyntaxError.UnknownOperation;
                         if (i != 0)
                         {
-                            if (symbolLex.GetSymbolType(Line[i - 1]) == SymbolType.Arifmetic) return SyntaxError.UnknownOperation;
+                            if (symbolLex.GetSymbolType(Context[i - 1]) == SymbolType.Arifmetic) return SyntaxError.UnknownOperation;
                         }
                         else
                         {
-                            if (symbolLex.GetSymbolType(Line[i + 1]) == SymbolType.Bracket) return SyntaxError.UnknownOperation;
+                            if (symbolLex.GetSymbolType(Context[i + 1]) == SymbolType.Bracket) return SyntaxError.UnknownOperation;
                         }
                     }
                     arifmetic = false;
@@ -88,7 +99,7 @@ namespace Compiler
             return SyntaxError.NoError;
         }
 
-        public ISyntaxTree GetSyntaxTree(string text)
+        public ISyntaxTree GetSyntaxTree()
         {
             List<string> Operands = new List<string>();
             List<string> Functions = new List<string>();
@@ -98,21 +109,21 @@ namespace Compiler
             int treeNum = 0;
             bool arifmetic = false;
             string var = string.Empty;
-            if (text == string.Empty) exp.Add(new ConstTree(""));
-            for (int i = 0; i < text.Length; i++)
+            if (Context == string.Empty) exp.Add(new ConstTree(""));
+            for (int i = 0; i < Context.Length; i++)
             {
-                if (symbolLex.GetSymbolType(text[i]) != SymbolType.Arifmetic
-                    && symbolLex.GetSymbolType(text[i]) != SymbolType.Bracket) var += text[i];
+                if (symbolLex.GetSymbolType(Context[i]) != SymbolType.Arifmetic
+                    && symbolLex.GetSymbolType(Context[i]) != SymbolType.Bracket) var += Context[i];
                 else arifmetic = true;
 
-                if (arifmetic || i == text.Length - 1)
+                if (arifmetic || i == Context.Length - 1)
                 {
                     if (var != string.Empty) Operands.Add(var);
-                    if (i != text.Length - 1 || text[i] == ')') Functions.Add(text[i].ToString());
+                    if (i != Context.Length - 1 || Context[i] == ')') Functions.Add(Context[i].ToString());
                     var = string.Empty;
                     arifmetic = false;
 
-                    if(Functions.Count == 0 && i == text.Length -1)
+                    if(Functions.Count == 0 && i == Context.Length -1)
                     {
                         exp.Add(OperationAnalyse(Operands, exp, 1));
                         break;
@@ -207,35 +218,35 @@ namespace Compiler
             int start = 0;
             int last = 3;
             string var = string.Empty;
-            for (int i = 0; i < Line.Length; i++)
+            for (int i = 0; i < Context.Length; i++)
             {
                 if (isMinus)
                 {
-                    var += Line[i];
+                    var += Context[i];
                 }
-                if (symbolLex.GetSymbolType(Line[i]) == SymbolType.Arifmetic
-                    || symbolLex.GetSymbolType(Line[i]) == SymbolType.Bracket
-                    || (i + 1 == Line.Length))
+                if (symbolLex.GetSymbolType(Context[i]) == SymbolType.Arifmetic
+                    || symbolLex.GetSymbolType(Context[i]) == SymbolType.Bracket
+                    || (i + 1 == Context.Length))
                 {
                     if (isMinus)
                     {
                         isMinus = false;
-                        if (i != Line.Length - 1 || var[var.Length - 1] == ')') var = var.Remove(var.Length - 1, 1);
+                        if (i != Context.Length - 1 || var[var.Length - 1] == ')') var = var.Remove(var.Length - 1, 1);
                         last = var.Length + 1;
                         if (i - last > 0) last++;
                         if (i - last < 0) last--;
 
-                        string head = Line.Substring(0, start);
-                        string tail = Line.Substring(i, Line.Length - (head.Length + var.Length) - 1);
-                        if (Line[i - last] != '(' && symbolLex.GetSymbolType(Line[i - last]) != SymbolType.Arifmetic)
+                        string head = Context.Substring(0, start);
+                        string tail = Context.Substring(i, Context.Length - (head.Length + var.Length) - 1);
+                        if (Context[i - last] != '(' && symbolLex.GetSymbolType(Context[i - last]) != SymbolType.Arifmetic)
                         {
                             var = "+(0-" + var + ")";
                             i += 4;
                         }
                         else
                         {
-                            if ((start != 0 && i != Line.Length - 1) || (start != 0 && i == Line.Length - 1)
-                                && Line[start - 1] == '(' && Line[i] == ')')
+                            if ((start != 0 && i != Context.Length - 1) || (start != 0 && i == Context.Length - 1)
+                                && Context[start - 1] == '(' && Context[i] == ')')
                             {
                                 var = "0-" + var;
                                 i += 1;
@@ -246,13 +257,13 @@ namespace Compiler
                                 i += 3;
                             }
                         }
-                        Line = head + var + tail;
+                        Context = head + var + tail;
                         var = string.Empty;
                         last = 3;
                     }
-                    if (Line[i] == '-' && i != Line.Length - 1)
+                    if (Context[i] == '-' && i != Context.Length - 1)
                     {
-                        if (symbolLex.GetSymbolType(Line[i + 1]) != SymbolType.Bracket)
+                        if (symbolLex.GetSymbolType(Context[i + 1]) != SymbolType.Bracket)
                         {
                             isMinus = true;
                             start = i;

@@ -8,28 +8,23 @@ namespace Compiler
 {
     class VariableParser : IParserElement
     {
-        public string Line { get; set; }
+        public List<ElementItem> Line { get; set; }
 
         public SyntaxError Check()
         {
-            int spacePos = Line.IndexOf(" ");
-            string exp = Line.Substring(spacePos + 1, Line.Length - spacePos - 1);
-
-            ExpressionParser expressionParser = new ExpressionParser(exp);
+            ExpressionParser expressionParser = new ExpressionParser(Line[1].Element);
             return expressionParser.Check();
         }
 
-        public ISyntaxTree GetSyntaxTree(string text)
+        public ISyntaxTree GetSyntaxTree()
         {
-            string[] elements = text.Split(' ');
-
             ISyntaxTree tree = new AssignTree();
-            ExpressionParser expressionParser = new ExpressionParser(elements[1]);
+            ExpressionParser expressionParser = new ExpressionParser(Line[1].Element);
             expressionParser.Normalize();
-            elements[1] = expressionParser.Line;
+            Line[1].Element = expressionParser.Line[0].Element;
 
-            tree.Context = elements[0];
-            tree.Childs.Add(expressionParser.GetSyntaxTree(elements[1]));
+            tree.Context = Line[0].Element;
+            tree.Childs.Add(expressionParser.GetSyntaxTree());
             return tree;
         }
 

@@ -8,22 +8,22 @@ namespace Compiler
 {
     class WriteParser : IParserElement
     {
-        public string Line { get; set; }
+        public List<ElementItem> Line { get; set; }
 
         public SyntaxError Check()
         {
             return SyntaxError.NoError;
         }
 
-        public ISyntaxTree GetSyntaxTree(string text)
+        public ISyntaxTree GetSyntaxTree()
         {
             WriteTree tree = new WriteTree();
-            ExpressionParser expressionParser = new ExpressionParser(text);
+            ExpressionParser expressionParser = new ExpressionParser(Line[0].Element);
             SyntaxError syntaxError = expressionParser.Check();
             if (syntaxError == SyntaxError.NoError)
             {
                 expressionParser.Normalize();
-                tree.Childs.Add(expressionParser.GetSyntaxTree(expressionParser.Line));
+                tree.Childs.Add(expressionParser.GetSyntaxTree());
             }
             else
             {

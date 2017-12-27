@@ -14,6 +14,29 @@ namespace Compiler
         public int SignCount => Signs.Count;
         public int ElementCount => Elements.Count;
 
+        public string Context
+        {
+            get
+            {
+                string context = string.Empty;
+                foreach (var item in Elements)
+                {
+                    if (item.HasValue)
+                    {
+                        context += item.Element;
+                    }
+                    else
+                    {
+                        if(item.ElementReference != null)
+                        {
+                            context += item.ElementReference.Elements.Context;
+                        }
+                    }
+                }
+                return context;
+            }
+        }
+
         public SyntaxElement()
         {
             Elements = new List<ElementItem>();
@@ -79,6 +102,16 @@ namespace Compiler
         public IEnumerator<string> GetEnumerator()
         {
             return this.Signs.GetEnumerator();
+        }
+
+        public List<ElementItem> GetParserElements(params int[] index)
+        {
+            List<ElementItem> parserItems = new List<ElementItem>();
+            foreach (int pos in index)
+            {
+                parserItems.Add(Elements[pos]);
+            }
+            return parserItems;
         }
     }
 }

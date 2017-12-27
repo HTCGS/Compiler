@@ -26,5 +26,11 @@ namespace Compiler
         {
             this.IsNullable = isNullable;
         }
+
+        public override IParserElement GetParser()
+        {
+            return Elements.Elements[1].ElementReference.GetParser();
+            
+        }
     }
 }

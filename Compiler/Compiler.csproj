@@ -93,6 +93,7 @@
     <Compile Include="Syntax\SyntaxObjects\ElementItem.cs" />
     <Compile Include="Syntax\SyntaxObjects\EmptySyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\IfSyntax.cs" />
+    <Compile Include="Syntax\SyntaxObjects\IFTrueBlockSyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\ISyntaxObject.cs" />
     <Compile Include="Lexer\ILexerElement.cs" />
     <Compile Include="Lexer\VariableLex.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Syntax\SyntaxObjects\VariableSyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\WritelnSyntax.cs" />
     <Compile Include="Syntax\SyntaxObjects\WriteSyntax.cs" />
+    <Compile Include="Syntax\VariableWithStopSyntax.cs" />
     <Compile Include="Variables.cs" />
   </ItemGroup>
   <ItemGroup>

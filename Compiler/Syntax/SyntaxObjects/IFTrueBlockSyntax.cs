@@ -6,23 +6,29 @@ using System.Threading.Tasks;
 
 namespace Compiler
 {
-    class AnySyntaxObject : SyntaxObject
+    class IFTrueBlockSyntax : SyntaxObject
     {
-        public AnySyntaxObject()
+        public IFTrueBlockSyntax()
         {
             Syntax = new List<ISyntaxObject>
             {
+                //new VariableWithStopSyntax(),
                 new VariableSyntax(),
                 new WritelnSyntax(),
                 new WriteSyntax()
             };
+
+            foreach (var item in Syntax)
+            {
+                item.Syntax.Add(new SymbolSyntax("", true, "else"));
+            }
         }
 
-        public AnySyntaxObject(string context) : base(context)
+        public IFTrueBlockSyntax(string context) : base(context)
         {
         }
 
-        public AnySyntaxObject(bool isNullable) : base(isNullable)
+        public IFTrueBlockSyntax(bool isNullable) : base(isNullable)
         {
         }
 
@@ -31,10 +37,13 @@ namespace Compiler
             this.Context = context;
             foreach (var item in Syntax)
             {
-                if(item.Check(context) == SyntaxError.NoError)
+                if (item.Check(context) == SyntaxError.NoError)
                 {
-                    this.ClearElements();
+                    //this.ClearElements();
+                    item.Elements.Elements.RemoveAt(item.Elements.Elements.Count - 1);
+                    Elements.Elements.Clear();
                     Elements.Add(item as SyntaxObject);
+                    this.Context = Elements.Context;
                     return SyntaxError.NoError;
                 }
             }

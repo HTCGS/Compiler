@@ -8,50 +8,61 @@ namespace Compiler
 {
     class IfParser : IParserElement
     {
-        public string Line { get; set; }
+        public List<ElementItem> Line { get; set; }
 
         public SyntaxError Check()
         {
             return SyntaxError.NoError;
         }
 
-        public ISyntaxTree GetSyntaxTree(string text)
+        public ISyntaxTree GetSyntaxTree()
         {
-            string[] elements = text.Split(' ');
-
-            ExpressionParser expressionParser = new ExpressionParser(elements[4]);
+            ExpressionParser expressionParser = new ExpressionParser(Line[4]);
             expressionParser.Normalize();
-            elements[4] = expressionParser.Line;
+            Line[4].Element = expressionParser.Line[0].Element;
 
-            ISyntaxTree blockTrue = new AssignTree();
-            blockTrue.Context = elements[3];
-            blockTrue.Childs.Add(expressionParser.GetSyntaxTree(elements[4]));
 
-            ISyntaxTree blockFalse = new AssignTree();
-            if (elements.Length > 5)
+            //ISyntaxTree blockTrue = new AssignTree();
+            //blockTrue.Context = Line[3].Element;
+            //blockTrue.Childs.Add(expressionParser.GetSyntaxTree());
+            ISyntaxTree blockTrue = Line[3].ElementReference.GetParser().GetSyntaxTree();
+
+
+            //ISyntaxTree blockFalse = new AssignTree();
+            //if (Line.Count > 5)
+            //{
+            //    expressionParser = new ExpressionParser(Line[6]);
+            //    expressionParser.Normalize();
+            //    Line[6] = expressionParser.Line[0];
+
+            //    blockFalse.Context = Line[5];
+            //    blockFalse.Childs.Add(expressionParser.GetSyntaxTree());
+            //}
+            //else blockFalse = null;
+
+            ISyntaxTree blockFalse = new FunctionTree();
+            //if (Line[5].ElementReference != null)
+            if (Line[4].ElementReference != null)
             {
-                expressionParser.Line = elements[6];
-                expressionParser.Normalize();
-                elements[6] = expressionParser.Line;
-
-                blockFalse.Context = elements[5];
-                blockFalse.Childs.Add(expressionParser.GetSyntaxTree(elements[6]));
+                //ISyntaxTree function = Line[5].ElementReference.GetParser().GetSyntaxTree();
+                ISyntaxTree function = Line[4].ElementReference.GetParser().GetSyntaxTree();
+                blockFalse.Childs.Add(function);
             }
             else blockFalse = null;
 
-            expressionParser.Line = elements[0];
+            expressionParser = new ExpressionParser(Line[0]);
             expressionParser.Normalize();
-            elements[0] = expressionParser.Line;
+            Line[0] = expressionParser.Line[0];
 
-            ISyntaxTree leftOp = expressionParser.GetSyntaxTree(elements[0]);
+            ISyntaxTree leftOp = expressionParser.GetSyntaxTree();
 
-            expressionParser.Line = elements[2];
+            expressionParser = new ExpressionParser(Line[2]);
             expressionParser.Normalize();
-            elements[2] = expressionParser.Line;
+            Line[2] = expressionParser.Line[0];
 
-            ISyntaxTree rightOp = expressionParser.GetSyntaxTree(elements[2]);
+            ISyntaxTree rightOp = expressionParser.GetSyntaxTree();
 
-            ISyntaxTree condition = GetConditionTree(elements[1]);
+            ISyntaxTree condition = GetConditionTree(Line[1].Element);
             condition.Childs.Add(leftOp);
             condition.Childs.Add(rightOp);
 

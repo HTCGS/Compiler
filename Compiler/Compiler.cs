@@ -94,7 +94,7 @@ namespace Compiler
                 if( syntaxError == SyntaxError.NoError)
                 {
                     item.Normalize();
-                    Programs.Add(item.GetSyntaxTree(item.Line));
+                    Programs.Add(item.GetSyntaxTree());
                 }
                 else
                 {

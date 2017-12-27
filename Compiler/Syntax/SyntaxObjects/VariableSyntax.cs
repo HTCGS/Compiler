@@ -29,7 +29,7 @@ namespace Compiler
         public override IParserElement GetParser()
         {
             VariableParser parser = new VariableParser();
-            parser.Line = Elements[0] + " " + Elements[2];
+            parser.Line = Elements.GetParserElements(0, 2);
             return parser;
         }
     }

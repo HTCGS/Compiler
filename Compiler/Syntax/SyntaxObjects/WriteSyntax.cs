@@ -26,7 +26,7 @@ namespace Compiler
         public override IParserElement GetParser()
         {
             WriteParser writeParser = new WriteParser();
-            writeParser.Line = Elements[2];
+            writeParser.Line = Elements.GetParserElements(2);
             return writeParser;
         }
 

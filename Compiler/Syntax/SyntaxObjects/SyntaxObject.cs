@@ -65,13 +65,13 @@ namespace Compiler
                     }
                     else
                     {
-                        if (i == Syntax.Count - 1)
-                        {
-                            element = line;
-                            check = Syntax[i].Check(element);
-                            if (check != SyntaxError.NoError) break;
-                        }
-                        else
+                        //if (i == Syntax.Count - 1)
+                        //{
+                        //    element = line;
+                        //    check = Syntax[i].Check(element);
+                        //    if (check != SyntaxError.NoError) break;
+                        //}
+                        //else
                         {
                             bool isFound = false;
                             for (int j = 1; j <= line.Length; j++)
@@ -104,10 +104,13 @@ namespace Compiler
                                 if (isFound) break;
                                 if (j >= line.Length - (Syntax.Count - i - 1)) break;
                             }
-                            if (!isFound)
+                            if (i != Syntax.Count - 1)
                             {
-                                check = SyntaxError.SyntaxError;
-                                break;
+                                if (!isFound)
+                                {
+                                    check = SyntaxError.SyntaxError;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -141,7 +144,10 @@ namespace Compiler
                 else return check;
             }
 
-            if (line != string.Empty || !IsFulSyntax()) return SyntaxError.SyntaxError;
+            this.Context = Elements.Context;
+
+            //if (line != string.Empty || !IsFulSyntax()) return SyntaxError.SyntaxError;
+            if (!IsFulSyntax()) return SyntaxError.SyntaxError;
             return SyntaxError.NoError;
         }
 
@@ -151,16 +157,19 @@ namespace Compiler
             return Check();
         }
 
-        public override IParserElement GetParser()
-        {
-            return null;
-        }
-
         private bool IsFulSyntax()
         {
-            if (Elements.ElementCount == Syntax.Count) return true;
+            if (Elements.ElementCount != Syntax.Count) return false;
+            for (int i = 0; i < Elements.Elements.Count; i++)
+            {
+                if (!Elements.Elements[i].HasValue
+                    && Elements.Elements[i].ElementReference == null)
+                {
+                    if (!Syntax[i].IsNullable) return false;
+                }
+            }
             //if (Syntax[Elements.ElementCount].IsNullable) return true;
-            return false;
+            return true;
         }
 
         private bool CheckNext(string line, int pos, int index, string element)
@@ -229,19 +238,23 @@ namespace Compiler
             this.Elements.Elements.Clear();
             for (int i = 0; i < Syntax.Count; i++)
             {
-                if (i < newObject.Syntax.Count)
+                if (this.Syntax[i].GetType() == newObject.Syntax[newPos].GetType())
                 {
-                    if (this.Syntax[i].GetType() == newObject.Syntax[newPos].GetType())
-                    {
-                        Elements.Add(newObject.Elements[newPos]);
-                        newPos++;
-                    }
+                    Elements.Add(newObject.Elements.Elements[newPos]);
+                    if(newObject.Syntax.Count > newPos + 1) newPos++;
                     else
                     {
-                        Elements.Add("");
+                        for (int j = i + 1; j < Syntax.Count; j++) 
+                        {
+                            Elements.Add("");
+                        }
+                        return;
                     }
                 }
-                else Elements.Add("");
+                else
+                {
+                    Elements.Add("");
+                }
             }
         }
 
@@ -268,9 +281,9 @@ namespace Compiler
         {
             foreach (var item in Elements.Elements)
             {
-                if(!item.HasValue)
+                if (!item.HasValue)
                 {
-                    if(item.ElementReference != null)
+                    if (item.ElementReference != null)
                     {
                         item.ElementReference.ClearElements();
                     }

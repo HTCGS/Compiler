@@ -17,10 +17,11 @@ namespace Compiler
                 new ArithmeticConditionSymbol(),
                 new ExpressionSyntax(),
                 new SymbolSyntax("", "then"),
-                new IdSyntax(),
-                new AssignSyntax("Assign", ":="),
-                new ExpressionSyntax(),
+                //new IdSyntax(),
+                //new AssignSyntax("Assign", ":="),
+                //new ExpressionSyntax(),
                 //new VariableSyntax(),
+                new IFTrueBlockSyntax(),
                 new ElseBlockSyntax(true)
             };
         }
@@ -32,14 +33,9 @@ namespace Compiler
         public override IParserElement GetParser()
         {
             IfParser parser = new IfParser();
-            //parser.Line = Elements[1] + " " + Elements[2]
-            //    + " " + Elements[3] + " " + Elements[5]
-            //    + " " + Elements[7];
-            //if (this.Elements.ElementCount > 8)
-            //{
-            //    parser.Line += " " + Elements[9] + " " + Elements[11];
-            //}
-            parser.Line = "";
+            //parser.Line = Elements.GetParserElements(1, 2, 3, 5, 7, 8);
+            parser.Line = Elements.GetParserElements(1, 2, 3, 5, 6);
+
             return parser;
         }
 
