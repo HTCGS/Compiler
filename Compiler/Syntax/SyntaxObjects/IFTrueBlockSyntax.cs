@@ -37,6 +37,8 @@ namespace Compiler
             this.Context = context;
             foreach (var item in Syntax)
             {
+                if (item is SyntaxObject) (item as SyntaxObject).ClearElements();
+                else item.Elements.Elements.Clear();
                 if (item.Check(context) == SyntaxError.NoError)
                 {
                     //this.ClearElements();

@@ -125,23 +125,27 @@ namespace Compiler
 
             if (check != SyntaxError.NoError)
             {
-                SyntaxObject syntaxObject = Activator.CreateInstance(this.GetType()) as SyntaxObject;
-                syntaxObject.Context = this.Context;
-                syntaxObject.Syntax.Clear();
-                syntaxObject.Syntax.AddRange(this.Syntax);
-                int nullablePos = GetNextNullableElement();
-                if (nullablePos != -1)
+                for (int n = 0; n < Syntax.Count; n++)
                 {
-                    syntaxObject.Syntax.RemoveAt(nullablePos);
-                    check = syntaxObject.Check();
-                    if (check == SyntaxError.NoError)
+                    SyntaxObject syntaxObject = Activator.CreateInstance(this.GetType()) as SyntaxObject;
+                    syntaxObject.Context = this.Context;
+                    syntaxObject.Syntax.Clear();
+                    syntaxObject.Syntax.AddRange(this.Syntax);
+                    int nullablePos = GetNextNullableElement();
+                    if (nullablePos != -1)
                     {
-                        AddNewSyntax(syntaxObject);
-                        line = string.Empty;
+                        syntaxObject.Syntax.RemoveAt(nullablePos);
+                        check = syntaxObject.Check();
+                        if (check == SyntaxError.NoError)
+                        {
+                            AddNewSyntax(syntaxObject);
+                            line = string.Empty;
+                            break;
+                        }
+                        //else return check;
                     }
                     else return check;
                 }
-                else return check;
             }
 
             this.Context = Elements.Context;
@@ -263,7 +267,7 @@ namespace Compiler
             int start = 0;
             if (lastNullableIndex != -1)
             {
-                start = lastNullableIndex;
+                start = lastNullableIndex + 1;
             }
             for (int i = start; i < Syntax.Count; i++)
             {
@@ -290,6 +294,7 @@ namespace Compiler
                 }
             }
             Elements.Elements.Clear();
+            lastNullableIndex = -1;
         }
     }
 }
