@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Compiler
+namespace CompilerLib
 {
     public class Lexer : ILexer
     {
@@ -28,6 +28,7 @@ namespace Compiler
                 bool isLetter = false;
                 foreach (var symbol in line)
                 {
+                    if (char.IsWhiteSpace(symbol)) continue;
                     text += symbol;
                     if (char.IsDigit(symbol))
                     {

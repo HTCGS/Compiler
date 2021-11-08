@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Compiler
+namespace CompilerLib
 {
     // public interface ILexer
     // {
@@ -23,8 +23,8 @@ namespace Compiler
 
     public class Lexeme
     {
-        string Token;
-        LexemeType LexemeType;
+        public string Token;
+        public LexemeType LexemeType;
     }
 
     public enum LexemeType
