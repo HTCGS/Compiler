@@ -19,4 +19,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Compiler-V2\Compiler-V2.csproj" />
+  </ItemGroup>
+
 </Project>
