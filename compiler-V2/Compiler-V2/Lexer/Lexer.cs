@@ -19,26 +19,66 @@ public class Lexer
     {
         this.Tokens = new List<Token>();
 
-        foreach (char c in this.Source)
+        string lexeme = string.Empty;
+        var currentTokenType = TokenType.Unknown;
+
+        foreach (char chr in this.Source)
         {
-            if (char.IsLetter(c))
+            if (char.IsWhiteSpace(chr)) continue;
+            if (char.IsLetter(chr))
             {
-                this.Tokens.Add(new Token(TokenType.Letter, c.ToString()));
+                if (currentTokenType != TokenType.Letter && !string.IsNullOrEmpty(lexeme))
+                {
+                    this.Tokens.Add(new Token(currentTokenType, lexeme));
+                    lexeme = string.Empty;
+                }
+                currentTokenType = TokenType.Letter;
+                lexeme += chr;
             }
-            else if (char.IsDigit(c))
+            else if (char.IsDigit(chr))
             {
-                this.Tokens.Add(new Token(TokenType.Digit, c.ToString()));
+                if (currentTokenType != TokenType.Digit && !string.IsNullOrEmpty(lexeme))
+                {
+                    this.Tokens.Add(new Token(currentTokenType, lexeme));
+                    lexeme = string.Empty;
+                }
+                currentTokenType = TokenType.Digit;
+                lexeme += chr;
             }
-            else if ("=".Contains(c))
+            else if ("=+-*/".Contains(chr))
             {
-                this.Tokens.Add(new Token(TokenType.Operator, c.ToString()));
+                if (currentTokenType != TokenType.Operator && !string.IsNullOrEmpty(lexeme))
+                {
+                    this.Tokens.Add(new Token(currentTokenType, lexeme));
+                    lexeme = string.Empty;
+                }
+                this.Tokens.Add(new Token(TokenType.Operator, chr.ToString()));
+                currentTokenType = TokenType.Unknown;
+                lexeme = string.Empty;
             }
             else
             {
-                this.Tokens.Add(new Token(TokenType.Unknown, c.ToString()));
+                if (!string.IsNullOrEmpty(lexeme))
+                {
+                    this.Tokens.Add(new Token(currentTokenType, lexeme));
+                    lexeme = string.Empty;
+                }
+                currentTokenType = TokenType.Unknown;
+                this.Tokens.Add(new Token(currentTokenType, chr.ToString()));
             }
         }
+        if (!string.IsNullOrEmpty(lexeme))
+        {
+            this.Tokens.Add(new Token(currentTokenType, lexeme));
+        }
         return this.Tokens;
+    }
+
+    public List<Token> Scan(string source)
+    {
+        this.Source = source;
+        var tokens = this.Scan();
+        return tokens;
     }
 
     public List<Token> ScanFile(string filePath = "")

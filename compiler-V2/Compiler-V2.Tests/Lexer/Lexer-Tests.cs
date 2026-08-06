@@ -11,8 +11,9 @@ public class Lexer_Tests
         List<Token> tokens = lexer.Scan();
 
         // Assert
-        Assert.Equal(5, tokens.Count);
-        Assert.All(tokens, token => Assert.Equal(TokenType.Digit, token.Type));
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Digit, tokens[0].Type);
+        Assert.Equal("12345", tokens[0].Lexeme);
     }
 
     [Fact]
@@ -26,8 +27,9 @@ public class Lexer_Tests
         List<Token> tokens = lexer.Scan();
 
         // Assert
-        Assert.Equal(5, tokens.Count);
-        Assert.All(tokens, token => Assert.Equal(TokenType.Letter, token.Type));
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Letter, tokens[0].Type);
+        Assert.Equal("abcde", tokens[0].Lexeme);
     }
 
     [Fact]
@@ -42,14 +44,15 @@ public class Lexer_Tests
 
         // Assert
         Assert.Single(tokens);
-        Assert.All(tokens, token => Assert.Equal(TokenType.Operator, token.Type));
+        Assert.Equal(TokenType.Operator, tokens[0].Type);
+        Assert.Equal("=", tokens[0].Lexeme);
     }
 
     [Fact]
     public void Scan_AssignmentDigitToLetter_ReturnTokensForLettersOperatorsAndDigits()
     {
         // Arrange
-        string source = "a=1";
+        string source = "a=156";
         Lexer lexer = new Lexer(source);
 
         // Act
@@ -60,6 +63,9 @@ public class Lexer_Tests
         Assert.Equal(TokenType.Letter, tokens[0].Type);
         Assert.Equal(TokenType.Operator, tokens[1].Type);
         Assert.Equal(TokenType.Digit, tokens[2].Type);
+        Assert.Equal("a", tokens[0].Lexeme);
+        Assert.Equal("=", tokens[1].Lexeme);
+        Assert.Equal("156", tokens[2].Lexeme);
     }
 
     [Fact]
