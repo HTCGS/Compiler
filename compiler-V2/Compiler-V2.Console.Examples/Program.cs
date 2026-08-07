@@ -34,9 +34,15 @@ var compiled = lambda.Compile();
 // Console.WriteLine(result);
 
 
-var source = "a = 4 + 5";
+var source = "a = 2 b=3 c=a+b";
 
 var lexer = new Lexer(source);
 var tokens = lexer.Scan();
 
-Console.ReadLine();
+Console.WriteLine("Tokens:");
+foreach (var token in tokens)
+{
+    Console.WriteLine($"  {token.Type}: {token.Lexeme}");
+}
+
+//Console.ReadLine();

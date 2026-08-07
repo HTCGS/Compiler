@@ -24,8 +24,8 @@ public class Lexer
 
         foreach (char chr in this.Source)
         {
-            if (char.IsWhiteSpace(chr)) continue;
-            if (char.IsLetter(chr))
+
+            if ("abcde".Contains(chr))
             {
                 if (currentTokenType != TokenType.Letter && !string.IsNullOrEmpty(lexeme))
                 {
@@ -55,6 +55,15 @@ public class Lexer
                 this.Tokens.Add(new Token(TokenType.Operator, chr.ToString()));
                 currentTokenType = TokenType.Unknown;
                 lexeme = string.Empty;
+            }
+            else if (char.IsWhiteSpace(chr))
+            {
+                if (!string.IsNullOrEmpty(lexeme))
+                {
+                    this.Tokens.Add(new Token(currentTokenType, lexeme));
+                    lexeme = string.Empty;
+                }
+                currentTokenType = TokenType.Unknown;
             }
             else
             {
