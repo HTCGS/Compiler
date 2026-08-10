@@ -1,85 +1,53 @@
-abstract class AbstractSyntaxElement
-{
-    public string Name { get; set; }
-    public List<AbstractSyntaxElement> Children { get; set; } = new List<AbstractSyntaxElement>();
-}
+using System.Linq.Expressions;
 
-class Function : AbstractSyntaxElement
+public class ASTParser
 {
-    public Function(string name, params AbstractSyntaxElement[] children)
+    public Expression Parse(SyntaxNode syntaxNode)
     {
-        this.Name = name;
-        this.Children.AddRange(children);
-    }
-}
-
-class Variable : AbstractSyntaxElement
-{
-    public Variable(string name)
-    {
-        this.Name = name;
-    }
-}
-
-class Assign : AbstractSyntaxElement
-{
-    public Variable Variable { get; set; }
-    public AbstractSyntaxElement Expression { get; set; }
-
-    public Assign(Variable variable, AbstractSyntaxElement expression)
-    {
-        this.Variable = variable;
-        this.Expression = expression;
-    }
-}
-class Plus : AbstractSyntaxElement
-{
-    public AbstractSyntaxElement Left { get; set; }
-    public AbstractSyntaxElement Right { get; set; }
-
-    public Plus(AbstractSyntaxElement left, AbstractSyntaxElement right)
-    {
-        this.Left = left;
-        this.Right = right;
-    }
-}
-
-class Constant : AbstractSyntaxElement
-{
-    public int Value { get; set; }
-
-    public Constant(int value)
-    {
-        this.Value = value;
-    }
-}
-
-class Return : AbstractSyntaxElement
-{
-    public AbstractSyntaxElement Expression { get; set; }
-
-    public Return(AbstractSyntaxElement expression)
-    {
-        this.Expression = expression;
+        Expression expr = Expression.Empty();
+        // if (syntaxNode is Variable variable)
+        // {
+        //     var res = VariableManager.GetVariable(variable.Name);
+        //     var displayResult = Expression.Call(typeof(Console).GetMethod("WriteLine",
+        //                                         new[] { typeof(int) }), res);
+        //     expr = displayResult;
+        // }
+        if (syntaxNode is Assign assign)
+        {
+            var variable = VariableManager.GetVariable(assign.Variable.Name);
+            var expression = Parse(assign.Expression);
+            var assignExpr = Expression.Assign(variable, expression);
+            expr = assignExpr;
+        }
+        else if (syntaxNode is Plus plus)
+        {
+            var left = Parse(plus.Left);
+            var right = Parse(plus.Right);
+            expr = Expression.Add(left, right);
+        }
+        else if (syntaxNode is Constant constant)
+        {
+            expr = Expression.Constant(constant.Value);
+        }
+        else if (syntaxNode is Variable variable)
+        {
+            expr = VariableManager.GetVariable(variable.Name);
+        }
+        return expr;
     }
 }
 
 
-
-
-class ASTParser
+public static class VariableManager
 {
-    public AbstractSyntaxElement Parse(List<Token> tokens)
-    {
-        // Implement parsing logic here to convert tokens into an AST
-        // This is a placeholder implementation and should be replaced with actual parsing logic
-        var main = new Function("main", new Assign(
-                                                new Variable("a"),
-                                                new Plus(
-                                                        new Variable("b"),
-                                                        new Constant(5))),
-                                new Return(new Constant(0)));
+    public static Dictionary<string, ParameterExpression> Variables = new Dictionary<string, ParameterExpression>();
 
-        return main;
+    public static ParameterExpression GetVariable(string name)
+    {
+        if (!Variables.ContainsKey(name))
+        {
+            Variables[name] = Expression.Variable(typeof(int), name);
+        }
+        return Variables[name];
     }
 }
