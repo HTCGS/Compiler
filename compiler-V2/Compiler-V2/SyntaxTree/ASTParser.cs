@@ -25,6 +25,12 @@ public class ASTParser
             var right = Parse(plus.Right);
             expr = Expression.Add(left, right);
         }
+        else if (syntaxNode is Multiply multiply)
+        {
+            var left = Parse(multiply.Left);
+            var right = Parse(multiply.Right);
+            expr = Expression.Multiply(left, right);
+        }
         else if (syntaxNode is Constant constant)
         {
             expr = Expression.Constant(constant.Value);

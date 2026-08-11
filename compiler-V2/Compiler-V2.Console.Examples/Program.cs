@@ -34,7 +34,7 @@ var compiled = lambda.Compile();
 // Console.WriteLine(result);
 
 
-var source = "a = 1+2+3";
+var source = "a = 1+2*3+4*5";
 
 var lexer = new Lexer(source);
 var tokens = lexer.Scan();
@@ -51,13 +51,13 @@ var syntaxTree = parser.Parse(tokens);
 var astParser = new ASTParser();
 var expression = astParser.Parse(syntaxTree);
 
-lexer.Source = "=2";
+lexer.Source = "b=2";
 tokens = lexer.Scan();
 
 syntaxTree = parser.Parse(tokens);
 var expression2 = astParser.Parse(syntaxTree);
 
-lexer.Source = "b";
+lexer.Source = "a";
 tokens = lexer.Scan();
 
 syntaxTree = parser.Parse(tokens);
