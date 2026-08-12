@@ -34,6 +34,11 @@ var compiled = lambda.Compile();
 // Console.WriteLine(result);
 
 
+// var source = "a = 1+2+3";
+// var source = "a = 2+2*2";
+// var source = "a = 2*2+2";
+// var source = "a = 2*2*2";
+// var source = "a = 1+2*3+4";
 var source = "a = 1+2*3+4*5";
 
 var lexer = new Lexer(source);

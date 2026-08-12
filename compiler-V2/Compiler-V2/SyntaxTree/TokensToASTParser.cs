@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 public abstract class SyntaxNode
@@ -178,14 +179,18 @@ public class TokensToASTParser
     {
         SyntaxNode expresion = new UnknownSyntax("Expression error!");
 
-        Stack<SyntaxNode> operators = new Stack<SyntaxNode>();
-        Stack<Token> operands = new Stack<Token>();
+        // Stack<SyntaxNode> operators = new Stack<SyntaxNode>();
+        // Stack<Token> operands = new Stack<Token>();
+        List<SyntaxNode> operators = new List<SyntaxNode>();
+        List<Token> operands = new List<Token>();
 
-        foreach (var token in tokens)
+        // foreach (var token in tokens)
+        for (int i = 0; i <= tokens.Count - 1; i++)
         {
+            var token = tokens[i];
             if (token.Type == TokenType.Digit || token.Type == TokenType.Letter)
             {
-                operands.Push(token);
+                operands.Add(token);
             }
             else if (token.Type == TokenType.Operator)
             {
@@ -197,24 +202,55 @@ public class TokensToASTParser
                 };
                 if (operators.Count == 0)
                 {
-                    operators.Push(newOperation);
+                    operators.Add(newOperation);
                 }
                 else
                 {
-                    var topOperator = operators.Pop() as Operation;
+                    var topOperator = operators.Last() as Operation;
                     if (GetOperationWeight(topOperator) > GetOperationWeight(newOperation))
                     {
-                        var rightOperand = Parse(new List<Token> { operands.Pop() });
-                        var leftOperand = Parse(new List<Token> { operands.Pop() });
-                        topOperator.Left = leftOperand;
-                        topOperator.Right = rightOperand;
-                        operators.Push(topOperator);
-                        operators.Push(newOperation);
+                        var topOpRightOperand = Parse(new List<Token> { operands.Last() });
+                        var topOpLeftOperand = Parse(new List<Token> { operands.SkipLast(1).Last() });
+                        topOperator.Left = topOpLeftOperand;
+                        topOperator.Right = topOpRightOperand;
+
+                        operands = operands.SkipLast(2).ToList();
+
+                        // operators.Push(topOperator);
+                        operators.Add(newOperation);
+
+                        // var nextToken = tokens.Skip(i + 1).Take(1).ToList();
+                        // var nextTokenSyntax = Parse(nextToken);
+                        // if (nextTokenSyntax is Variable || nextTokenSyntax is Constant)
+                        // {
+                        //     (newOperation as Operation).Right = nextTokenSyntax;
+                        //     (newOperation as Operation).Left = topOperator;
+                        //     operators.Push(newOperation);
+                        //     i += 2;
+                        // }
+
+
+                        // var rightOperand = Parse(new List<Token> { operands.Pop() });
+                        // var newOpLeftOperand = Parse(new List<Token> { operands.Pop() });
+                        // (newOperation as Operation).Left = newOpLeftOperand;
+
+                        // var topOpLeftOperand = Parse(new List<Token> { operands.Pop() });
+                        // topOperator.Left = topOpLeftOperand;
+                        // topOperator.Right = newOperation;
+                        // operators.Push(topOperator);
+
+                        // var nextToken = tokens.Skip(i + 1).Take(1).ToList();
+                        // var nextTokenSyntax = Parse(nextToken);
+                        // if (nextTokenSyntax is Variable || nextTokenSyntax is Constant)
+                        // {
+                        //     (newOperation as Operation).Right = nextTokenSyntax;
+                        //     i += 2;
+                        // }
                     }
                     else
                     {
-                        operators.Push(topOperator);
-                        operators.Push(newOperation);
+                        // operators.Push(topOperator);
+                        operators.Add(newOperation);
                     }
                 }
             }
@@ -222,26 +258,109 @@ public class TokensToASTParser
 
         if (operators.Count != 0)
         {
-            var operation = operators.Pop() as Operation;
-            var rightOperand = Parse(new List<Token> { operands.Pop() });
-            var leftOperand = Parse(new List<Token> { operands.Pop() });
-            operation.Right = rightOperand;
-            operation.Left = leftOperand;
-            expresion = operation;
+            // var operation = operators.Pop() as Operation;
+            // if (operation.Right is UnknownSyntax)
+            // {
+            //     var rightOperand = Parse(new List<Token> { operands.Pop() });
+            //     operation.Right = rightOperand;
+            // }
+            // if (operation.Left is UnknownSyntax)
+            // {
+            //     var leftOperand = Parse(new List<Token> { operands.Pop() });
+            //     operation.Left = leftOperand;
+            // }
+            // expresion = operation;
 
-            while (operators.Count != 0)
+            // while (operators.Count != 0)
+            // {
+            //     var topOperation = operators.Pop() as Operation;
+            //     topOperation.Right = expresion;
+
+
+            //     leftOperand = Parse(new List<Token> { operands.Pop() });
+            //     topOperation.Left = leftOperand;
+            //     expresion = topOperation;
+            // }
+
+            Operation lastOp = operators.First() as Operation;
+            if (lastOp.Left is UnknownSyntax)
             {
-                var topOperation = operators.Pop() as Operation;
-                leftOperand = Parse(new List<Token> { operands.Pop() });
-                topOperation.Left = leftOperand;
-                topOperation.Right = expresion;
-                expresion = topOperation;
+                var leftOperand = Parse(operands.Take(1).ToList());
+                operands = operands.Skip(1).ToList();
+                lastOp.Left = leftOperand;
+            }
+            if (lastOp.Right is UnknownSyntax)
+            {
+                if (operators.Count >= 2)
+                {
+                    var nextOp = operators.Skip(1).Take(1).First() as Operation;
+                    if (nextOp.Left is UnknownSyntax)
+                    {
+                        var nextOpLeftOperand = Parse(operands.Take(1).ToList());
+                        nextOp.Left = nextOpLeftOperand;
+                        operands = operands.Skip(1).ToList();
+                    }
+                    if (nextOp.Right is UnknownSyntax)
+                    {
+                        var nextOpRightOperand = Parse(operands.Take(1).ToList());
+                        nextOp.Right = nextOpRightOperand;
+                        operands = operands.Skip(1).ToList();
+                    }
+                    lastOp.Right = nextOp;
+                }
+                else
+                {
+                    var rightOperand = Parse(operands.Take(1).ToList());
+                    operands = operands.Skip(1).ToList();
+                    lastOp.Right = rightOperand;
+                }
+            }
+            expresion = lastOp;
+            for (int i = 1; i < operators.Count; i++)
+            {
+                Operation operation = operators[i] as Operation;
+                if (operation.Left is not UnknownSyntax && operation.Right is not UnknownSyntax) continue;
+                if (operation.Left is UnknownSyntax)
+                {
+                    // var leftOperand = Parse(operands.Take(1).ToList());
+                    // operands = operands.Skip(1).ToList();
+                    operation.Left = lastOp;
+                }
+                if (operation.Right is UnknownSyntax)
+                {
+                    if (i < operators.Count - 1)
+                    {
+                        var nextOp = operators[i + 1] as Operation;
+                        if (nextOp.Left is UnknownSyntax)
+                        {
+                            var nextOpLeftOperand = Parse(operands.Take(1).ToList());
+                            nextOp.Left = nextOpLeftOperand;
+                            operands = operands.Skip(1).ToList();
+                        }
+                        if (nextOp.Right is UnknownSyntax)
+                        {
+                            var nextOpRightOperand = Parse(operands.Take(1).ToList());
+                            nextOp.Right = nextOpRightOperand;
+                            operands = operands.Skip(1).ToList();
+                        }
+                        operation.Right = nextOp;
+                    }
+                    else
+                    {
+                        var rightOperand = Parse(operands.Take(1).ToList());
+                        operands = operands.Skip(1).ToList();
+                        operation.Right = rightOperand;
+                    }
+                }
+                expresion = operation;
             }
         }
         else
         {
-            expresion = Parse(new List<Token> { operands.Pop() });
+            expresion = Parse(new List<Token> { operands.First() });
         }
+
+
 
         return expresion;
     }
