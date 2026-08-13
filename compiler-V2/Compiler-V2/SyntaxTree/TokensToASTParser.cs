@@ -111,8 +111,13 @@ public class TokensToASTParser
             var variable = new Variable(tokens[0].Lexeme);
 
             var exprTokens = tokens.Skip(2).ToList();
-            // var expr = Parse(exprTokens);
+            if (exprTokens.Count == 0) return new UnknownSyntax("Expression can`t be empty");
+            // var expr = Parse(exprTokens);   ((2+1)
+            SyntaxNode exprError = CheckExpression(exprTokens);
+            if (exprError != null) return exprError;
             var expr = ParseExpression(exprTokens);
+            if (expr is UnknownSyntax error) return error;
+
 
             var assign = new Assign(variable, expr);
             return assign;
@@ -132,24 +137,12 @@ public class TokensToASTParser
                 _ => new UnknownSyntax($"Operator '{tokens[1].Lexeme}' is not supported.")
             };
 
-            if ((operation is Multiply left) && (rightExpr is Plus right))
-            {
-                operation = new Plus(new Multiply(left.Left, right.Left), right.Right);
-            }
+            // if ((operation is Multiply left) && (rightExpr is Plus right))
+            // {
+            //     operation = new Plus(new Multiply(left.Left, right.Left), right.Right);
+            // }
             return operation;
         }
-        // else if (tokens.Count >= 2 &&
-        //             tokens[1].Type == TokenType.Operator && tokens[1].Lexeme == "+")
-        // {
-        //     var leftToken = tokens.Take(1).ToList();
-        //     var rightTokens = tokens.Skip(2).ToList();
-
-        //     var leftExpr = Parse(leftToken);
-        //     var rightExpr = Parse(rightTokens);
-
-        //     var plus = new Plus(leftExpr, rightExpr);
-        //     return plus;
-        // }
         else if (tokens.Count == 1 && tokens[0].Type == TokenType.Letter)
         {
             var variable = new Variable(tokens[0].Lexeme);
@@ -161,18 +154,17 @@ public class TokensToASTParser
             return constant;
         }
         return syntaxNode;
+    }
 
-
-        // Implement parsing logic here to convert tokens into an AST
-        // This is a placeholder implementation and should be replaced with actual parsing logic
-        // var main = new Function("main", new Assign(
-        //                                         new Variable("a"),
-        //                                         new Plus(
-        //                                                 new Variable("b"),
-        //                                                 new Constant(5))),
-        //                         new Return(new Constant(0)));
-
-        // return main;
+    private SyntaxNode CheckExpression(List<Token> tokens)
+    {
+        foreach (var token in tokens)
+        {
+            if (token.Type == TokenType.Letter || token.Type == TokenType.Digit
+                    || (token.Type == TokenType.Operator && token.Lexeme != "=")) continue;
+            else return new UnknownSyntax("Unavaliable math expression token!");
+        }
+        return null;
     }
 
     public SyntaxNode ParseExpression(List<Token> tokens)
@@ -198,7 +190,7 @@ public class TokensToASTParser
                 {
                     "+" => new Plus(),
                     "*" => new Multiply(),
-                    _ => new UnknownSyntax($"Operator '{tokens[1].Lexeme}' is not supported.")
+                    _ => new UnknownSyntax($"Operator '{token.Lexeme}' is not supported.")
                 };
                 if (operators.Count == 0)
                 {
@@ -215,41 +207,10 @@ public class TokensToASTParser
                         topOperator.Right = topOpRightOperand;
 
                         operands = operands.SkipLast(2).ToList();
-
-                        // operators.Push(topOperator);
                         operators.Add(newOperation);
-
-                        // var nextToken = tokens.Skip(i + 1).Take(1).ToList();
-                        // var nextTokenSyntax = Parse(nextToken);
-                        // if (nextTokenSyntax is Variable || nextTokenSyntax is Constant)
-                        // {
-                        //     (newOperation as Operation).Right = nextTokenSyntax;
-                        //     (newOperation as Operation).Left = topOperator;
-                        //     operators.Push(newOperation);
-                        //     i += 2;
-                        // }
-
-
-                        // var rightOperand = Parse(new List<Token> { operands.Pop() });
-                        // var newOpLeftOperand = Parse(new List<Token> { operands.Pop() });
-                        // (newOperation as Operation).Left = newOpLeftOperand;
-
-                        // var topOpLeftOperand = Parse(new List<Token> { operands.Pop() });
-                        // topOperator.Left = topOpLeftOperand;
-                        // topOperator.Right = newOperation;
-                        // operators.Push(topOperator);
-
-                        // var nextToken = tokens.Skip(i + 1).Take(1).ToList();
-                        // var nextTokenSyntax = Parse(nextToken);
-                        // if (nextTokenSyntax is Variable || nextTokenSyntax is Constant)
-                        // {
-                        //     (newOperation as Operation).Right = nextTokenSyntax;
-                        //     i += 2;
-                        // }
                     }
                     else
                     {
-                        // operators.Push(topOperator);
                         operators.Add(newOperation);
                     }
                 }
@@ -258,33 +219,10 @@ public class TokensToASTParser
 
         if (operators.Count != 0)
         {
-            // var operation = operators.Pop() as Operation;
-            // if (operation.Right is UnknownSyntax)
-            // {
-            //     var rightOperand = Parse(new List<Token> { operands.Pop() });
-            //     operation.Right = rightOperand;
-            // }
-            // if (operation.Left is UnknownSyntax)
-            // {
-            //     var leftOperand = Parse(new List<Token> { operands.Pop() });
-            //     operation.Left = leftOperand;
-            // }
-            // expresion = operation;
-
-            // while (operators.Count != 0)
-            // {
-            //     var topOperation = operators.Pop() as Operation;
-            //     topOperation.Right = expresion;
-
-
-            //     leftOperand = Parse(new List<Token> { operands.Pop() });
-            //     topOperation.Left = leftOperand;
-            //     expresion = topOperation;
-            // }
-
             Operation lastOp = operators.First() as Operation;
             if (lastOp.Left is UnknownSyntax)
             {
+                if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                 var leftOperand = Parse(operands.Take(1).ToList());
                 operands = operands.Skip(1).ToList();
                 lastOp.Left = leftOperand;
@@ -296,12 +234,14 @@ public class TokensToASTParser
                     var nextOp = operators.Skip(1).Take(1).First() as Operation;
                     if (nextOp.Left is UnknownSyntax)
                     {
+                        if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                         var nextOpLeftOperand = Parse(operands.Take(1).ToList());
                         nextOp.Left = nextOpLeftOperand;
                         operands = operands.Skip(1).ToList();
                     }
                     if (nextOp.Right is UnknownSyntax)
                     {
+                        if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                         var nextOpRightOperand = Parse(operands.Take(1).ToList());
                         nextOp.Right = nextOpRightOperand;
                         operands = operands.Skip(1).ToList();
@@ -310,6 +250,7 @@ public class TokensToASTParser
                 }
                 else
                 {
+                    if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                     var rightOperand = Parse(operands.Take(1).ToList());
                     operands = operands.Skip(1).ToList();
                     lastOp.Right = rightOperand;
@@ -322,8 +263,6 @@ public class TokensToASTParser
                 if (operation.Left is not UnknownSyntax && operation.Right is not UnknownSyntax) continue;
                 if (operation.Left is UnknownSyntax)
                 {
-                    // var leftOperand = Parse(operands.Take(1).ToList());
-                    // operands = operands.Skip(1).ToList();
                     operation.Left = lastOp;
                 }
                 if (operation.Right is UnknownSyntax)
@@ -333,12 +272,14 @@ public class TokensToASTParser
                         var nextOp = operators[i + 1] as Operation;
                         if (nextOp.Left is UnknownSyntax)
                         {
+                            if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                             var nextOpLeftOperand = Parse(operands.Take(1).ToList());
                             nextOp.Left = nextOpLeftOperand;
                             operands = operands.Skip(1).ToList();
                         }
                         if (nextOp.Right is UnknownSyntax)
                         {
+                            if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                             var nextOpRightOperand = Parse(operands.Take(1).ToList());
                             nextOp.Right = nextOpRightOperand;
                             operands = operands.Skip(1).ToList();
@@ -347,6 +288,7 @@ public class TokensToASTParser
                     }
                     else
                     {
+                        if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
                         var rightOperand = Parse(operands.Take(1).ToList());
                         operands = operands.Skip(1).ToList();
                         operation.Right = rightOperand;
@@ -359,9 +301,6 @@ public class TokensToASTParser
         {
             expresion = Parse(new List<Token> { operands.First() });
         }
-
-
-
         return expresion;
     }
 
