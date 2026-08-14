@@ -38,10 +38,18 @@ abstract class Operation : SyntaxNode
     public SyntaxNode Left { get; set; }
     public SyntaxNode Right { get; set; }
 
-    public Operation(SyntaxNode left, SyntaxNode right = null)
+    public Operation(SyntaxNode left = null, SyntaxNode right = null)
     {
-        this.Left = left;
+        this.Left = left ?? new UnknownSyntax("Unknown");
         this.Right = right ?? new UnknownSyntax("Unknown");
+    }
+}
+
+class UnknownOperation : Operation
+{
+    public UnknownOperation(string errorMessage) : base(null, null)
+    {
+        this.Name = errorMessage;
     }
 }
 
@@ -60,14 +68,24 @@ class Plus : Operation
 {
     public Plus(SyntaxNode left, SyntaxNode right) : base(left, right) { }
 
-    public Plus() : base(new UnknownSyntax("Unknown"), new UnknownSyntax("Unknown")) { }
+    public Plus() : base(null, null) { }
 }
 
 class Multiply : Operation
 {
     public Multiply(SyntaxNode left, SyntaxNode right) : base(left, right) { }
 
-    public Multiply() : base(new UnknownSyntax("Unknown"), new UnknownSyntax("Unknown")) { }
+    public Multiply() : base(null, null) { }
+}
+
+class BracketOperation : Operation
+{
+    public bool IsOpen;
+
+    public BracketOperation(bool isOpen)
+    {
+        this.IsOpen = isOpen;
+    }
 }
 
 class Constant : SyntaxNode
@@ -115,6 +133,7 @@ public class TokensToASTParser
             // var expr = Parse(exprTokens);   ((2+1)
             SyntaxNode exprError = CheckExpression(exprTokens);
             if (exprError != null) return exprError;
+
             var expr = ParseExpression(exprTokens);
             if (expr is UnknownSyntax error) return error;
 
@@ -130,11 +149,11 @@ public class TokensToASTParser
             var leftExpr = Parse(leftToken);
             var rightExpr = Parse(rightTokens);
 
-            SyntaxNode operation = tokens[1].Lexeme switch  // (2+2)*2  2*(2+2) 2*((2+2)*2)
+            Operation operation = tokens[1].Lexeme switch  // (2+2)*2  2*(2+2) 2*((2+2)*2)
             {
                 "+" => new Plus(leftExpr, rightExpr),
                 "*" => new Multiply(leftExpr, rightExpr),
-                _ => new UnknownSyntax($"Operator '{tokens[1].Lexeme}' is not supported.")
+                _ => new UnknownOperation($"Operator '{tokens[1].Lexeme}' is not supported.")
             };
 
             // if ((operation is Multiply left) && (rightExpr is Plus right))
@@ -158,12 +177,22 @@ public class TokensToASTParser
 
     private SyntaxNode CheckExpression(List<Token> tokens)
     {
+        int openBracketCount = 0;
+        int closeBracketCount = 0;
         foreach (var token in tokens)
         {
             if (token.Type == TokenType.Letter || token.Type == TokenType.Digit
-                    || (token.Type == TokenType.Operator && token.Lexeme != "=")) continue;
+                    || (token.Type == TokenType.Operator && token.Lexeme != "=")
+                    || token.Type == TokenType.Bracket)
+            {
+                if (token.Lexeme == "(") openBracketCount++;
+                if (token.Lexeme == ")") closeBracketCount++;
+            }
             else return new UnknownSyntax("Unavaliable math expression token!");
         }
+
+        if (openBracketCount != closeBracketCount) return new UnknownSyntax("Lost bracket!");
+
         return null;
     }
 
@@ -173,7 +202,7 @@ public class TokensToASTParser
 
         // Stack<SyntaxNode> operators = new Stack<SyntaxNode>();
         // Stack<Token> operands = new Stack<Token>();
-        List<SyntaxNode> operators = new List<SyntaxNode>();
+        List<Operation> operators = new List<Operation>();
         List<Token> operands = new List<Token>();
 
         // foreach (var token in tokens)
@@ -184,13 +213,15 @@ public class TokensToASTParser
             {
                 operands.Add(token);
             }
-            else if (token.Type == TokenType.Operator)
+            else if (token.Type == TokenType.Operator || token.Type == TokenType.Bracket)
             {
-                SyntaxNode newOperation = token.Lexeme switch
+                Operation newOperation = token.Lexeme switch
                 {
                     "+" => new Plus(),
                     "*" => new Multiply(),
-                    _ => new UnknownSyntax($"Operator '{token.Lexeme}' is not supported.")
+                    "(" => new BracketOperation(true),
+                    ")" => new BracketOperation(false),
+                    _ => new UnknownOperation($"Operator '{token.Lexeme}' is not supported.")
                 };
                 if (operators.Count == 0)
                 {
@@ -198,16 +229,69 @@ public class TokensToASTParser
                 }
                 else
                 {
-                    var topOperator = operators.Last() as Operation;
-                    if (GetOperationWeight(topOperator) > GetOperationWeight(newOperation))
+                    var topOperator = operators.Last();
+                    if ((newOperation is not BracketOperation && topOperator is not BracketOperation)
+                            && GetOperationWeight(topOperator) > GetOperationWeight(newOperation))
                     {
-                        var topOpRightOperand = Parse(new List<Token> { operands.Last() });
-                        var topOpLeftOperand = Parse(new List<Token> { operands.SkipLast(1).Last() });
-                        topOperator.Left = topOpLeftOperand;
-                        topOperator.Right = topOpRightOperand;
-
-                        operands = operands.SkipLast(2).ToList();
+                        if (topOperator.Right is UnknownSyntax)
+                        {
+                            var topOpRightOperand = Parse(new List<Token> { operands.Last() });
+                            topOperator.Right = topOpRightOperand;
+                            operands = operands.SkipLast(1).ToList();
+                        }
+                        if (tokens[i - 3].Type == TokenType.Digit || tokens[i - 3].Type == TokenType.Letter)
+                        {
+                            if (topOperator.Left is UnknownSyntax)
+                            {
+                                // var topOpLeftOperand = Parse(new List<Token> { operands.SkipLast(1).Last() });
+                                var topOpLeftOperand = Parse(new List<Token> { operands.Last() });
+                                topOperator.Left = topOpLeftOperand;
+                                operands = operands.SkipLast(1).ToList();
+                            }
+                        }
+                        else
+                        {
+                            var lastOp = operators.SkipLast(1).Last();
+                            topOperator.Left = lastOp;
+                            newOperation.Left = topOperator;
+                            operators = operators.SkipLast(2).ToList();
+                        }
+                        // operands = operands.SkipLast(2).ToList();
                         operators.Add(newOperation);
+                    }
+                    else if (newOperation is BracketOperation bracket && bracket.IsOpen == false)
+                    {
+                        Operation inBracketOp = new UnknownOperation("No operation in bracket!");
+                        for (int j = operators.Count - 1; j >= 0; j--)
+                        {
+                            var op = operators[j];
+                            if (op is BracketOperation openBracket && openBracket.IsOpen)
+                            {
+                                operators.RemoveAt(j);
+                                if (inBracketOp is UnknownOperation) return new UnknownSyntax(inBracketOp.Name);
+                                operators.Add(inBracketOp);
+                                // operators[j] = inBracketOp;
+                                break;
+                            }
+                            if (inBracketOp is UnknownOperation && op.Right is UnknownSyntax)
+                            {
+                                var opRightOperand = Parse(new List<Token> { operands.Last() });
+                                op.Right = opRightOperand;
+                                operands = operands.SkipLast(1).ToList();
+                            }
+                            else
+                            {
+                                op.Right = inBracketOp;
+                            }
+                            if (op.Left is UnknownSyntax)
+                            {
+                                var opLeftOperand = Parse(new List<Token> { operands.Last() });
+                                op.Left = opLeftOperand;
+                                operands = operands.SkipLast(1).ToList();
+                            }
+                            operators.RemoveAt(j);
+                            inBracketOp = op;
+                        }
                     }
                     else
                     {
@@ -219,7 +303,8 @@ public class TokensToASTParser
 
         if (operators.Count != 0)
         {
-            Operation lastOp = operators.First() as Operation;
+            Operation lastOp = operators.First();
+            if (lastOp is UnknownOperation) return new UnknownSyntax(lastOp.Name);
             if (lastOp.Left is UnknownSyntax)
             {
                 if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
@@ -231,7 +316,7 @@ public class TokensToASTParser
             {
                 if (operators.Count >= 2)
                 {
-                    var nextOp = operators.Skip(1).Take(1).First() as Operation;
+                    var nextOp = operators.Skip(1).Take(1).First();
                     if (nextOp.Left is UnknownSyntax)
                     {
                         if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
@@ -259,7 +344,7 @@ public class TokensToASTParser
             expresion = lastOp;
             for (int i = 1; i < operators.Count; i++)
             {
-                Operation operation = operators[i] as Operation;
+                Operation operation = operators[i];
                 if (operation.Left is not UnknownSyntax && operation.Right is not UnknownSyntax) continue;
                 if (operation.Left is UnknownSyntax)
                 {
@@ -269,7 +354,7 @@ public class TokensToASTParser
                 {
                     if (i < operators.Count - 1)
                     {
-                        var nextOp = operators[i + 1] as Operation;
+                        var nextOp = operators[i + 1];
                         if (nextOp.Left is UnknownSyntax)
                         {
                             if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
@@ -310,6 +395,7 @@ public class TokensToASTParser
         {
             Plus => 1,
             Multiply => 2,
+            // BracketOperation => 3,
             _ => 0
         };
     }

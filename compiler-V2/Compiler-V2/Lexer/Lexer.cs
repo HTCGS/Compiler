@@ -56,6 +56,17 @@ public class Lexer
                 currentTokenType = TokenType.Unknown;
                 lexeme = string.Empty;
             }
+            else if ("()".Contains(chr))
+            {
+                if (currentTokenType != TokenType.Bracket && !string.IsNullOrEmpty(lexeme))
+                {
+                    this.Tokens.Add(new Token(currentTokenType, lexeme));
+                    lexeme = string.Empty;
+                }
+                this.Tokens.Add(new Token(TokenType.Bracket, chr.ToString()));
+                currentTokenType = TokenType.Unknown;
+                lexeme = string.Empty;
+            }
             else if (char.IsWhiteSpace(chr))
             {
                 if (!string.IsNullOrEmpty(lexeme))

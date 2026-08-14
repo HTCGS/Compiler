@@ -4,5 +4,6 @@ public enum TokenType
     Letter,
     Digit,
     Operator,
+    Bracket,
     Unknown
 }
