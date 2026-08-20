@@ -6,7 +6,7 @@ public abstract class SyntaxNode
     public string Name { get; set; }
 }
 
-class UnknownSyntax : SyntaxNode
+public class UnknownSyntax : SyntaxNode
 {
     public UnknownSyntax(string name)
     {
@@ -25,7 +25,7 @@ class Function : SyntaxNode
     }
 }
 
-class Variable : SyntaxNode
+public class Variable : SyntaxNode
 {
     public Variable(string name)
     {
@@ -88,7 +88,7 @@ class BracketOperation : Operation
     }
 }
 
-class Constant : SyntaxNode
+public class Constant : SyntaxNode
 {
     public int Value { get; set; }
 
@@ -120,7 +120,7 @@ public class TokensToASTParser
         if (tokens == null || tokens.Count == 0)
         {
             // throw new ArgumentException("Tokens cannot be null or empty.");
-            return syntaxNode;
+            return new UnknownSyntax("Tokens cannot be null or empty!");
         }
 
         if (tokens.Count >= 2 && tokens[0].Type == TokenType.Letter
