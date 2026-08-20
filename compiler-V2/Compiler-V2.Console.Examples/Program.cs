@@ -39,10 +39,22 @@ var compiled = lambda.Compile();
 // var source = "a = 2*2+2";
 // var source = "a = 2*2*2";
 // var source = "a = 1+2*3+4";
-var source = "a = 1+2*3+4*5";
+// var source = "a = 1*2*3+4";
+// var source = "a = 2*3*4+5";
+// var source = "a = 1+2*3+4*5";
 // var source = "a = =1+2=3 ";
 // var source = "a = (1)";
+var source = "a = 1+(2*3)*4+5";
+// var source = "a = (2+2)*2";
+// var source = "a = (1*2)*3+4";
+// var source = "a = (1+2)+(3*4+5)";
+// var source = "a = (1+2)+(3+4+5)";
+// var source = "a = (1+2)+(3*4*5)";
 // var source = "a = (1+2)*3+(4*5)";
+// var source = "a = (1*2)*(3*(4*5))";
+// var source = "a = (1+2)*(3+(4*5))";
+// var source = "a = (1+2)+(3+(4+(5+6)))";
+// var source = "a = (1+2)+(3+(4+(5*6+7)))";
 
 var lexer = new Lexer(source);
 var tokens = lexer.Scan();
@@ -86,12 +98,12 @@ var allVariables = VariableManager.Variables.Select(kvp => kvp.Value).ToList();
 // var displayB = Expression.Call(typeof(Console).GetMethod("WriteLine",
 //                                     new[] { typeof(int) }), varB);
 
-var program = Expression.Block(allVariables, expression, expression2, expression3);
-var compiledExpression = Expression.Lambda<Action>(program).Compile();
-compiledExpression();
-
 System.Console.WriteLine(expression);
 System.Console.WriteLine(expression2);
 System.Console.WriteLine(expression3);
+
+var program = Expression.Block(allVariables, expression, expression2, expression3);
+var compiledExpression = Expression.Lambda<Action>(program).Compile();
+compiledExpression();
 
 // Console.ReadLine();

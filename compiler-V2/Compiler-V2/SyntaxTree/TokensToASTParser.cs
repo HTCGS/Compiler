@@ -33,7 +33,7 @@ public class Variable : SyntaxNode
     }
 }
 
-abstract class Operation : SyntaxNode
+public abstract class Operation : SyntaxNode
 {
     public SyntaxNode Left { get; set; }
     public SyntaxNode Right { get; set; }
@@ -45,7 +45,7 @@ abstract class Operation : SyntaxNode
     }
 }
 
-class UnknownOperation : Operation
+public class UnknownOperation : Operation
 {
     public UnknownOperation(string errorMessage) : base(null, null)
     {
@@ -53,7 +53,7 @@ class UnknownOperation : Operation
     }
 }
 
-class Assign : SyntaxNode
+public class Assign : SyntaxNode
 {
     public Variable Variable { get; set; }
     public SyntaxNode Expression { get; set; }
@@ -64,21 +64,21 @@ class Assign : SyntaxNode
         this.Expression = expression;
     }
 }
-class Plus : Operation
+public class Plus : Operation
 {
     public Plus(SyntaxNode left, SyntaxNode right) : base(left, right) { }
 
     public Plus() : base(null, null) { }
 }
 
-class Multiply : Operation
+public class Multiply : Operation
 {
     public Multiply(SyntaxNode left, SyntaxNode right) : base(left, right) { }
 
     public Multiply() : base(null, null) { }
 }
 
-class BracketOperation : Operation
+public class BracketOperation : Operation
 {
     public bool IsOpen;
 
@@ -229,6 +229,7 @@ public class TokensToASTParser
                 }
                 else
                 {
+                    //! Проверить предыдущие операции, пока их приоритет больше текущей операции
                     var topOperator = operators.Last();
                     if ((newOperation is not BracketOperation && topOperator is not BracketOperation)
                             && GetOperationWeight(topOperator) > GetOperationWeight(newOperation))
@@ -247,6 +248,8 @@ public class TokensToASTParser
                                 var topOpLeftOperand = Parse(new List<Token> { operands.Last() });
                                 topOperator.Left = topOpLeftOperand;
                                 operands = operands.SkipLast(1).ToList();
+                                // newOperation.Left = topOperator;
+                                // operators = operators.SkipLast(1).ToList();
                             }
                         }
                         else
@@ -273,21 +276,84 @@ public class TokensToASTParser
                                 // operators[j] = inBracketOp;
                                 break;
                             }
-                            if (inBracketOp is UnknownOperation && op.Right is UnknownSyntax)
+                            // if (inBracketOp is UnknownOperation && op.Right is UnknownSyntax)
+                            // {
+                            //     var opRightOperand = Parse(new List<Token> { operands.Last() });
+                            //     op.Right = opRightOperand;
+                            //     operands = operands.SkipLast(1).ToList();
+                            // }
+                            // else
+                            // {
+                            //     if (op.Right is UnknownSyntax) op.Right = inBracketOp;
+                            // }
+                            // if (op.Left is UnknownSyntax)
+                            // {
+                            //     if (j > 0 && operators[j - 1] is not BracketOperation)
+                            //     {
+                            //         op.Left = operators[j - 1];
+                            //         operators.RemoveAt(j);
+                            //         operators.RemoveAt(j - 1);
+                            //         inBracketOp = op;
+                            //         j--;
+                            //         continue;
+                            //     }
+                            //     else
+                            //     {
+                            //         var opLeftOperand = Parse(new List<Token> { operands.Last() });
+                            //         op.Left = opLeftOperand;
+                            //         operands = operands.SkipLast(1).ToList();
+                            //     }
+                            // }
+
+
+                            if (inBracketOp is UnknownOperation)
                             {
-                                var opRightOperand = Parse(new List<Token> { operands.Last() });
-                                op.Right = opRightOperand;
-                                operands = operands.SkipLast(1).ToList();
+                                if (op.Right is UnknownSyntax)
+                                {
+                                    var opRightOperand = Parse(new List<Token> { operands.Last() });
+                                    op.Right = opRightOperand;
+                                    operands = operands.SkipLast(1).ToList();
+                                }
+                                if (operators[j - 1] is not BracketOperation && GetOperationWeight(operators[j - 1]) > GetOperationWeight(op))
+                                {
+                                    op.Left = operators[j - 1];
+                                    operators.RemoveAt(j);
+                                    operators.RemoveAt(j - 1);
+                                    inBracketOp = op;
+                                    j--;
+                                    continue;
+                                }
+                                else
+                                {
+                                    if (op.Left is UnknownSyntax)
+                                    {
+                                        var opLeftOperand = Parse(new List<Token> { operands.Last() });
+                                        op.Left = opLeftOperand;
+                                        operands = operands.SkipLast(1).ToList();
+                                    }
+                                }
                             }
                             else
                             {
                                 op.Right = inBracketOp;
-                            }
-                            if (op.Left is UnknownSyntax)
-                            {
-                                var opLeftOperand = Parse(new List<Token> { operands.Last() });
-                                op.Left = opLeftOperand;
-                                operands = operands.SkipLast(1).ToList();
+                                if (operators[j - 1] is not BracketOperation && GetOperationWeight(operators[j - 1]) > GetOperationWeight(op))
+                                {
+                                    op.Left = operators[j - 1];
+                                    operators.RemoveAt(j);
+                                    operators.RemoveAt(j - 1);
+                                    inBracketOp = op;
+                                    j--;
+                                    continue;
+                                }
+                                else
+                                {
+                                    if (op.Left is UnknownSyntax)
+                                    {
+                                        var opLeftOperand = Parse(new List<Token> { operands.Last() });
+                                        op.Left = opLeftOperand;
+                                        operands = operands.SkipLast(1).ToList();
+                                    }
+                                }
                             }
                             operators.RemoveAt(j);
                             inBracketOp = op;
