@@ -200,18 +200,16 @@ public class TokensToASTParser
     {
         SyntaxNode expresion = new UnknownSyntax("Expression error!");
 
-        // Stack<SyntaxNode> operators = new Stack<SyntaxNode>();
-        // Stack<Token> operands = new Stack<Token>();
-        List<Operation> operators = new List<Operation>();
-        List<Token> operands = new List<Token>();
+        Stack<Operation> operators = new Stack<Operation>();
+        Stack<SyntaxNode> operands = new Stack<SyntaxNode>();
 
-        // foreach (var token in tokens)
-        for (int i = 0; i <= tokens.Count - 1; i++)
+        for (int i = 0; i < tokens.Count; i++)
         {
             var token = tokens[i];
             if (token.Type == TokenType.Digit || token.Type == TokenType.Letter)
             {
-                operands.Add(token);
+                var constOrVar = Parse(new List<Token> { token });
+                operands.Push(constOrVar);
             }
             else if (token.Type == TokenType.Operator || token.Type == TokenType.Bracket)
             {
@@ -223,235 +221,62 @@ public class TokensToASTParser
                     ")" => new BracketOperation(false),
                     _ => new UnknownOperation($"Operator '{token.Lexeme}' is not supported.")
                 };
-                if (operators.Count == 0)
+
+                if (operators.Count == 0 || (newOperation is BracketOperation bracket && bracket.IsOpen))
                 {
-                    operators.Add(newOperation);
+                    operators.Push(newOperation);
                 }
                 else
                 {
-                    //! Проверить предыдущие операции, пока их приоритет больше текущей операции
-                    var topOperator = operators.Last();
-                    if ((newOperation is not BracketOperation && topOperator is not BracketOperation)
-                            && GetOperationWeight(topOperator) > GetOperationWeight(newOperation))
+                    if (newOperation is BracketOperation closeBracket && !closeBracket.IsOpen)
                     {
-                        if (topOperator.Right is UnknownSyntax)
+                        while (operators.Count != 0)
                         {
-                            var topOpRightOperand = Parse(new List<Token> { operands.Last() });
-                            topOperator.Right = topOpRightOperand;
-                            operands = operands.SkipLast(1).ToList();
+                            var op = operators.Pop();
+                            if (op is BracketOperation openBracket && openBracket.IsOpen) break;
+                            var rightOperand = operands.Pop();
+                            var leftOperands = operands.Pop();
+                            op.Left = leftOperands;
+                            op.Right = rightOperand;
+                            operands.Push(op);
                         }
-                        if (tokens[i - 3].Type == TokenType.Digit || tokens[i - 3].Type == TokenType.Letter)
-                        {
-                            if (topOperator.Left is UnknownSyntax)
-                            {
-                                // var topOpLeftOperand = Parse(new List<Token> { operands.SkipLast(1).Last() });
-                                var topOpLeftOperand = Parse(new List<Token> { operands.Last() });
-                                topOperator.Left = topOpLeftOperand;
-                                operands = operands.SkipLast(1).ToList();
-                                // newOperation.Left = topOperator;
-                                // operators = operators.SkipLast(1).ToList();
-                            }
-                        }
-                        else
-                        {
-                            var lastOp = operators.SkipLast(1).Last();
-                            topOperator.Left = lastOp;
-                            newOperation.Left = topOperator;
-                            operators = operators.SkipLast(2).ToList();
-                        }
-                        // operands = operands.SkipLast(2).ToList();
-                        operators.Add(newOperation);
                     }
-                    else if (newOperation is BracketOperation bracket && bracket.IsOpen == false)
+                    else
                     {
-                        Operation inBracketOp = new UnknownOperation("No operation in bracket!");
-                        for (int j = operators.Count - 1; j >= 0; j--)
+                        if (operators.Count >= 1)
                         {
-                            var op = operators[j];
-                            if (op is BracketOperation openBracket && openBracket.IsOpen)
+                            var prevOp = operators.Pop();
+                            if (GetOperationWeight(prevOp) > GetOperationWeight(newOperation))
                             {
-                                operators.RemoveAt(j);
-                                if (inBracketOp is UnknownOperation) return new UnknownSyntax(inBracketOp.Name);
-                                operators.Add(inBracketOp);
-                                // operators[j] = inBracketOp;
-                                break;
-                            }
-                            // if (inBracketOp is UnknownOperation && op.Right is UnknownSyntax)
-                            // {
-                            //     var opRightOperand = Parse(new List<Token> { operands.Last() });
-                            //     op.Right = opRightOperand;
-                            //     operands = operands.SkipLast(1).ToList();
-                            // }
-                            // else
-                            // {
-                            //     if (op.Right is UnknownSyntax) op.Right = inBracketOp;
-                            // }
-                            // if (op.Left is UnknownSyntax)
-                            // {
-                            //     if (j > 0 && operators[j - 1] is not BracketOperation)
-                            //     {
-                            //         op.Left = operators[j - 1];
-                            //         operators.RemoveAt(j);
-                            //         operators.RemoveAt(j - 1);
-                            //         inBracketOp = op;
-                            //         j--;
-                            //         continue;
-                            //     }
-                            //     else
-                            //     {
-                            //         var opLeftOperand = Parse(new List<Token> { operands.Last() });
-                            //         op.Left = opLeftOperand;
-                            //         operands = operands.SkipLast(1).ToList();
-                            //     }
-                            // }
-
-
-                            if (inBracketOp is UnknownOperation)
-                            {
-                                if (op.Right is UnknownSyntax)
-                                {
-                                    var opRightOperand = Parse(new List<Token> { operands.Last() });
-                                    op.Right = opRightOperand;
-                                    operands = operands.SkipLast(1).ToList();
-                                }
-                                if (operators[j - 1] is not BracketOperation && GetOperationWeight(operators[j - 1]) > GetOperationWeight(op))
-                                {
-                                    op.Left = operators[j - 1];
-                                    operators.RemoveAt(j);
-                                    operators.RemoveAt(j - 1);
-                                    inBracketOp = op;
-                                    j--;
-                                    continue;
-                                }
-                                else
-                                {
-                                    if (op.Left is UnknownSyntax)
-                                    {
-                                        var opLeftOperand = Parse(new List<Token> { operands.Last() });
-                                        op.Left = opLeftOperand;
-                                        operands = operands.SkipLast(1).ToList();
-                                    }
-                                }
+                                var prevOpRightOperand = operands.Pop();
+                                var prevOpLeftOperand = operands.Pop();
+                                prevOp.Right = prevOpRightOperand;
+                                prevOp.Left = prevOpLeftOperand;
+                                operands.Push(prevOp);
+                                i--;
+                                continue;
                             }
                             else
                             {
-                                op.Right = inBracketOp;
-                                if (operators[j - 1] is not BracketOperation && GetOperationWeight(operators[j - 1]) > GetOperationWeight(op))
-                                {
-                                    op.Left = operators[j - 1];
-                                    operators.RemoveAt(j);
-                                    operators.RemoveAt(j - 1);
-                                    inBracketOp = op;
-                                    j--;
-                                    continue;
-                                }
-                                else
-                                {
-                                    if (op.Left is UnknownSyntax)
-                                    {
-                                        var opLeftOperand = Parse(new List<Token> { operands.Last() });
-                                        op.Left = opLeftOperand;
-                                        operands = operands.SkipLast(1).ToList();
-                                    }
-                                }
+                                operators.Push(prevOp);
+                                operators.Push(newOperation);
                             }
-                            operators.RemoveAt(j);
-                            inBracketOp = op;
-                        }
-                    }
-                    else
-                    {
-                        operators.Add(newOperation);
-                    }
-                }
-            }
-        }
 
-        if (operators.Count != 0)
-        {
-            Operation lastOp = operators.First();
-            if (lastOp is UnknownOperation) return new UnknownSyntax(lastOp.Name);
-            if (lastOp.Left is UnknownSyntax)
-            {
-                if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                var leftOperand = Parse(operands.Take(1).ToList());
-                operands = operands.Skip(1).ToList();
-                lastOp.Left = leftOperand;
-            }
-            if (lastOp.Right is UnknownSyntax)
-            {
-                if (operators.Count >= 2)
-                {
-                    var nextOp = operators.Skip(1).Take(1).First();
-                    if (nextOp.Left is UnknownSyntax)
-                    {
-                        if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                        var nextOpLeftOperand = Parse(operands.Take(1).ToList());
-                        nextOp.Left = nextOpLeftOperand;
-                        operands = operands.Skip(1).ToList();
-                    }
-                    if (nextOp.Right is UnknownSyntax)
-                    {
-                        if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                        var nextOpRightOperand = Parse(operands.Take(1).ToList());
-                        nextOp.Right = nextOpRightOperand;
-                        operands = operands.Skip(1).ToList();
-                    }
-                    lastOp.Right = nextOp;
-                }
-                else
-                {
-                    if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                    var rightOperand = Parse(operands.Take(1).ToList());
-                    operands = operands.Skip(1).ToList();
-                    lastOp.Right = rightOperand;
-                }
-            }
-            expresion = lastOp;
-            for (int i = 1; i < operators.Count; i++)
-            {
-                Operation operation = operators[i];
-                if (operation.Left is not UnknownSyntax && operation.Right is not UnknownSyntax) continue;
-                if (operation.Left is UnknownSyntax)
-                {
-                    operation.Left = lastOp;
-                }
-                if (operation.Right is UnknownSyntax)
-                {
-                    if (i < operators.Count - 1)
-                    {
-                        var nextOp = operators[i + 1];
-                        if (nextOp.Left is UnknownSyntax)
-                        {
-                            if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                            var nextOpLeftOperand = Parse(operands.Take(1).ToList());
-                            nextOp.Left = nextOpLeftOperand;
-                            operands = operands.Skip(1).ToList();
                         }
-                        if (nextOp.Right is UnknownSyntax)
-                        {
-                            if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                            var nextOpRightOperand = Parse(operands.Take(1).ToList());
-                            nextOp.Right = nextOpRightOperand;
-                            operands = operands.Skip(1).ToList();
-                        }
-                        operation.Right = nextOp;
-                    }
-                    else
-                    {
-                        if (operands.Count == 0) return new UnknownSyntax("Operand is absent!");
-                        var rightOperand = Parse(operands.Take(1).ToList());
-                        operands = operands.Skip(1).ToList();
-                        operation.Right = rightOperand;
                     }
                 }
-                expresion = operation;
             }
         }
-        else
+        while (operators.Count != 0)
         {
-            expresion = Parse(new List<Token> { operands.First() });
+            var op = operators.Pop();
+            var rightOperand = operands.Pop();
+            var leftOperands = operands.Pop();
+            op.Left = leftOperands;
+            op.Right = rightOperand;
+            operands.Push(op);
         }
+        if (operands.Count != 0) expresion = operands.Pop();
         return expresion;
     }
 

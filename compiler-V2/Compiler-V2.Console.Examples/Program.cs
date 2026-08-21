@@ -35,6 +35,7 @@ var compiled = lambda.Compile();
 
 
 // var source = "a = 1+2+3";
+// var source = "a = 1*2*3+4";
 // var source = "a = 2+2*2";
 // var source = "a = 2*2+2";
 // var source = "a = 2*2*2";
@@ -43,8 +44,12 @@ var compiled = lambda.Compile();
 // var source = "a = 2*3*4+5";
 // var source = "a = 1+2*3+4*5";
 // var source = "a = =1+2=3 ";
-// var source = "a = (1)";
-var source = "a = 1+(2*3)*4+5";
+var source = "a = (1)";
+// var source = "a = (2+2)*2";
+// var source = "a = 1+(2*3)+4";
+// var source = "a = 1+2*3*4+5";
+// var source = "a = 1+(2*3)*4+5";
+// var source = "a = 1+(2*3+4)*5+6";
 // var source = "a = (2+2)*2";
 // var source = "a = (1*2)*3+4";
 // var source = "a = (1+2)+(3*4+5)";
