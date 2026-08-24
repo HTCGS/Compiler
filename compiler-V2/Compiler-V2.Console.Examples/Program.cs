@@ -44,7 +44,7 @@ var compiled = lambda.Compile();
 // var source = "a = 2*3*4+5";
 // var source = "a = 1+2*3+4*5";
 // var source = "a = =1+2=3 ";
-var source = "a = (1)";
+// var source = "a = (1)";
 // var source = "a = (2+2)*2";
 // var source = "a = 1+(2*3)+4";
 // var source = "a = 1+2*3*4+5";
@@ -61,7 +61,14 @@ var source = "a = (1)";
 // var source = "a = (1+2)+(3+(4+(5+6)))";
 // var source = "a = (1+2)+(3+(4+(5*6+7)))";
 
+
+// var source = "abcde+123+";
+// var source = "abcde((1+2)*3)";
+var source = "ab(1=0+1)(ab(2=0+1+1)(ab(3=0+1+2)(abcde(3))))";
+// var source = "ab(6+2=(2+2)*2)(a = 55)";
+
 var lexer = new Lexer(source);
+lexer.Keywords = new List<string> { "abcde", "ab" };
 var tokens = lexer.Scan();
 
 Console.WriteLine("Tokens:");

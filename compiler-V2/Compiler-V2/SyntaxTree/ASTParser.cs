@@ -12,7 +12,33 @@ public class ASTParser
         //                                         new[] { typeof(int) }), res);
         //     expr = displayResult;
         // }
-        if (syntaxNode is Assign assign)
+        if (syntaxNode is Function func)
+        {
+            if (func.Name == "abcde")
+            {
+                var arg = Parse(func.Body.First());
+                var writeLine = Expression.Call(typeof(Console).GetMethod("WriteLine",
+                                    new[] { typeof(int) }), arg);
+                return writeLine;
+            }
+            else if (func.Name == "ab")
+            {
+                var leftCond = Parse(func.Body[0]);
+                var rightCond = Parse(func.Body[1]);
+                var trueExpr = Parse(func.Body[2]);
+                // var trueExpr = Expression.Block(Parse(func.Body[2]));
+
+                var falseExpr = Expression.Call(typeof(Console).GetMethod("WriteLine",
+                                    new[] { typeof(string) }), Expression.Constant("false"));
+                // var falseExpr = Expression.Block(Expression.Call(typeof(Console).GetMethod("WriteLine",
+                //                     new[] { typeof(string) }), Expression.Constant("false")));
+                // expr = Expression.Condition(Expression.Equal(leftCond, rightCond),
+                //                                 trueExpr, falseExpr);
+
+                expr = Expression.IfThen(Expression.Equal(leftCond, rightCond), trueExpr);
+            }
+        }
+        else if (syntaxNode is Assign assign)
         {
             var variable = VariableManager.GetVariable(assign.Variable.Name);
             var expression = Parse(assign.Expression);

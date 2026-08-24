@@ -130,7 +130,6 @@ public class TokensToASTParser
 
             var exprTokens = tokens.Skip(2).ToList();
             if (exprTokens.Count == 0) return new UnknownSyntax("Expression can`t be empty");
-            // var expr = Parse(exprTokens);   ((2+1)
             SyntaxNode exprError = CheckExpression(exprTokens);
             if (exprError != null) return exprError;
 
@@ -140,6 +139,42 @@ public class TokensToASTParser
 
             var assign = new Assign(variable, expr);
             return assign;
+        }
+        else if (tokens.Count >= 4 && tokens[0].Type == TokenType.Keyword
+                    && tokens[0].Lexeme == "abcde")
+        {
+            var exprTokens = tokens.Skip(2).SkipLast(1).ToList();
+            var expr = ParseExpression(exprTokens);
+            var writeLineFunc = new Function(tokens[0].Lexeme, expr);
+            return writeLineFunc;
+        }
+        else if (tokens.Count >= 7 && tokens[0].Type == TokenType.Keyword
+                    && tokens[0].Lexeme == "ab")
+        {
+            var conditionMiddleIndex = tokens.FindIndex(t => t.Type == TokenType.Operator && t.Lexeme == "=");
+            var conditionLeftTokens = tokens.Skip(2).SkipLast(tokens.Count - conditionMiddleIndex).ToList();
+            int conditionEndIndex = conditionMiddleIndex + 1;
+            for (int i = conditionMiddleIndex + 1; i < tokens.Count - 1; i++)
+            {
+                if (tokens[i].Lexeme == ")" && tokens[i + 1].Lexeme == "(")
+                {
+                    conditionEndIndex = i;
+                    break;
+                }
+            }
+            var conditionRightTokens = tokens.Skip(conditionMiddleIndex + 1).SkipLast(tokens.Count - conditionEndIndex).ToList();
+
+            var conditionLeftExpr = ParseExpression(conditionLeftTokens);
+            var conditionRightExpr = ParseExpression(conditionRightTokens);
+
+            // var conditionTokens = tokens.Skip(2).SkipLast(4).ToList();
+            // var condition = ParseExpression(conditionTokens);
+
+            var trueTokens = tokens.Skip(conditionEndIndex + 2).SkipLast(1).ToList();
+            var trueExpr = Parse(trueTokens);
+
+            var ifFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, trueExpr);
+            return ifFunc;
         }
         else if (tokens.Count >= 2 && tokens[1].Type == TokenType.Operator)
         {

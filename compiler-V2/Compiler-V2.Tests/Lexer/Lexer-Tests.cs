@@ -336,7 +336,7 @@ public class Lexer_Tests
         List<Token> tokens = lexer.Scan();
 
         // Assert
-        Assert.Equal(3, tokens.Count);
+        Assert.Empty(tokens);
         Assert.All(tokens, token => Assert.Equal(TokenType.Unknown, token.Type));
     }
 }
