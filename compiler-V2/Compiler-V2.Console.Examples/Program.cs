@@ -61,14 +61,19 @@ var compiled = lambda.Compile();
 // var source = "a = (1+2)+(3+(4+(5+6)))";
 // var source = "a = (1+2)+(3+(4+(5*6+7)))";
 
+// var source = "a = -1 -1-1 -1-(-2+3) -(1+2)";
+// var source = "a = -1";
+var source = "a = -1-1 ";
+// var source = "a = -(1+2)";
+// var source = "a = -1-(-2+3)";
 
-// var source = "abcde+123+";
-// var source = "abcde((1+2)*3)";
-var source = "ab(1=0+1)(ab(2=0+1+1)(ab(3=0+1+2)(abcde(3))))";
-// var source = "ab(6+2=(2+2)*2)(a = 55)";
+// var source = "write((123))";
+// var source = "write((1+2)*3)";
+// var source = "if(1=0+1)(if(2=0+1+1)(if(3=0+1+2)(write(111))))";
+// var source = "if(6+2=(2+2)*2)(a = 55)";
 
 var lexer = new Lexer(source);
-lexer.Keywords = new List<string> { "abcde", "ab" };
+lexer.Keywords = new List<string> { "if", "write" };
 var tokens = lexer.Scan();
 
 Console.WriteLine("Tokens:");
@@ -89,16 +94,16 @@ tokens = lexer.Scan();
 syntaxTree = parser.Parse(tokens);
 var expression2 = astParser.Parse(syntaxTree);
 
-lexer.Source = "a";
+lexer.Source = "write(a)";
 tokens = lexer.Scan();
 
 syntaxTree = parser.Parse(tokens);
 var expression3 = astParser.Parse(syntaxTree);
-if (expression3 is ParameterExpression parameterExpression)
-{
-    expression3 = Expression.Call(typeof(Console).GetMethod("WriteLine",
-                                    new[] { typeof(int) }), expression3);
-}
+// if (expression3 is ParameterExpression parameterExpression)
+// {
+//     expression3 = Expression.Call(typeof(Console).GetMethod("WriteLine",
+//                                     new[] { typeof(int) }), expression3);
+// }
 
 
 var allVariables = VariableManager.Variables.Select(kvp => kvp.Value).ToList();
@@ -113,6 +118,7 @@ var allVariables = VariableManager.Variables.Select(kvp => kvp.Value).ToList();
 System.Console.WriteLine(expression);
 System.Console.WriteLine(expression2);
 System.Console.WriteLine(expression3);
+System.Console.WriteLine("=======");
 
 var program = Expression.Block(allVariables, expression, expression2, expression3);
 var compiledExpression = Expression.Lambda<Action>(program).Compile();

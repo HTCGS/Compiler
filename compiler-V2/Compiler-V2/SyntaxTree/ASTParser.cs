@@ -14,14 +14,14 @@ public class ASTParser
         // }
         if (syntaxNode is Function func)
         {
-            if (func.Name == "abcde")
+            if (func.Name == "write")
             {
                 var arg = Parse(func.Body.First());
                 var writeLine = Expression.Call(typeof(Console).GetMethod("WriteLine",
                                     new[] { typeof(int) }), arg);
                 return writeLine;
             }
-            else if (func.Name == "ab")
+            else if (func.Name == "if")
             {
                 var leftCond = Parse(func.Body[0]);
                 var rightCond = Parse(func.Body[1]);

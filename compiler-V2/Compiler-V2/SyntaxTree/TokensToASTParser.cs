@@ -78,6 +78,20 @@ public class Multiply : Operation
     public Multiply() : base(null, null) { }
 }
 
+public class Subtract : Operation
+{
+    public Subtract(SyntaxNode left, SyntaxNode right) : base(left, right) { }
+
+    public Subtract() : base(null, null) { }
+}
+
+public class Divide : Operation
+{
+    public Divide(SyntaxNode left, SyntaxNode right) : base(left, right) { }
+
+    public Divide() : base(null, null) { }
+}
+
 public class BracketOperation : Operation
 {
     public bool IsOpen;
@@ -141,15 +155,20 @@ public class TokensToASTParser
             return assign;
         }
         else if (tokens.Count >= 4 && tokens[0].Type == TokenType.Keyword
-                    && tokens[0].Lexeme == "abcde")
+                    && tokens[0].Lexeme == "write")
         {
-            var exprTokens = tokens.Skip(2).SkipLast(1).ToList();
-            var expr = ParseExpression(exprTokens);
-            var writeLineFunc = new Function(tokens[0].Lexeme, expr);
-            return writeLineFunc;
+            if (tokens[1].Lexeme == "(" && tokens.Last().Lexeme == ")")
+            {
+                var exprTokens = tokens.Skip(2).SkipLast(1).ToList();
+                var expr = ParseExpression(exprTokens);
+                if (expr is UnknownSyntax error) return error;
+                var writeLineFunc = new Function(tokens[0].Lexeme, expr);
+                return writeLineFunc;
+            }
+            else return new UnknownSyntax("Function argument must be in bracket!");
         }
         else if (tokens.Count >= 7 && tokens[0].Type == TokenType.Keyword
-                    && tokens[0].Lexeme == "ab")
+                    && tokens[0].Lexeme == "if")
         {
             var conditionMiddleIndex = tokens.FindIndex(t => t.Type == TokenType.Operator && t.Lexeme == "=");
             var conditionLeftTokens = tokens.Skip(2).SkipLast(tokens.Count - conditionMiddleIndex).ToList();
@@ -210,6 +229,44 @@ public class TokensToASTParser
         return syntaxNode;
     }
 
+    private List<Token> ConvertNegativeNumbers(List<Token> tokens)
+    {
+        var convertedTokens = new List<Token>();
+
+        for (int i = 0; i < tokens.Count - 1; i++)
+        {
+            var token = tokens[i];
+            if (token.Type == TokenType.Operator && token.Lexeme == "-")
+            {
+                if (i == 0 && (tokens[i + 1].Type == TokenType.Letter || tokens[i + 1].Type == TokenType.Digit))
+                {
+                    // var zeroSubNumOrVar = new List<Token>
+                    // {
+                    //     new Token(TokenType.Bracket, "("),
+                    //     new Token(TokenType.Digit, "0"),
+                    //     new Token(TokenType.Operator,"-"),
+                    //     new Token(tokens[i+1].Type, tokens[i+1].Lexeme),
+                    //     new Token(TokenType.Bracket, ")"),
+                    // };
+                    // tokens.RemoveRange(i, i + 1);
+                    // zeroSubNumOrVar.AddRange(tokens);
+
+                    convertedTokens.Add(new Token(TokenType.Bracket, "("));
+                    convertedTokens.Add(new Token(TokenType.Digit, "0"));
+                    convertedTokens.Add(new Token(TokenType.Operator, "-"));
+                    convertedTokens.Add(new Token(tokens[i + 1].Type, tokens[i + 1].Lexeme));
+                    convertedTokens.Add(new Token(TokenType.Bracket, ")"));
+                    i++;
+                    continue;
+                }
+                // else convertedTokens.Add(token);
+            }
+            convertedTokens.Add(token);
+        }
+        convertedTokens.Add(tokens.Last());
+        return convertedTokens;
+    }
+
     private SyntaxNode CheckExpression(List<Token> tokens)
     {
         int openBracketCount = 0;
@@ -234,6 +291,11 @@ public class TokensToASTParser
     public SyntaxNode ParseExpression(List<Token> tokens)
     {
         SyntaxNode expresion = new UnknownSyntax("Expression error!");
+
+        var exprError = CheckExpression(tokens);
+        if (exprError != null) return exprError;
+
+        tokens = ConvertNegativeNumbers(tokens);
 
         Stack<Operation> operators = new Stack<Operation>();
         Stack<SyntaxNode> operands = new Stack<SyntaxNode>();

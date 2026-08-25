@@ -166,7 +166,7 @@ public class Lexer
     {
         var tokenType = TokenType.Unknown;
 
-        if ("abcde".Contains(chr)) tokenType = TokenType.Letter;
+        if ("abcdeifwrt".Contains(chr)) tokenType = TokenType.Letter;
         else if (char.IsDigit(chr)) tokenType = TokenType.Digit;
         else if ("=+-*/".Contains(chr)) tokenType = TokenType.Operator;
         else if ("()".Contains(chr)) tokenType = TokenType.Bracket;
