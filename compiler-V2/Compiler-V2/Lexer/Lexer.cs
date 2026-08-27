@@ -33,7 +33,10 @@ public class Lexer
             {
                 if (!string.IsNullOrEmpty(lexeme))
                 {
-                    this.Tokens.Add(new Token(prevTokenType, lexeme));
+                    if (prevTokenType == TokenType.Letter && IsKeyword(lexeme))
+                        this.Tokens.Add(new Token(TokenType.Keyword, lexeme));
+                    else
+                        this.Tokens.Add(new Token(prevTokenType, lexeme));
                     prevTokenType = TokenType.Unknown;
                     lexeme = string.Empty;
                 }
@@ -166,7 +169,7 @@ public class Lexer
     {
         var tokenType = TokenType.Unknown;
 
-        if ("abcdeifwrt".Contains(chr)) tokenType = TokenType.Letter;
+        if ("abcdeifwrthn".Contains(chr)) tokenType = TokenType.Letter;
         else if (char.IsDigit(chr)) tokenType = TokenType.Digit;
         else if ("=+-*/".Contains(chr)) tokenType = TokenType.Operator;
         else if ("()".Contains(chr)) tokenType = TokenType.Bracket;

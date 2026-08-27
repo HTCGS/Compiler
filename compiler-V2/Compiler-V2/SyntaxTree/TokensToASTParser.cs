@@ -78,11 +78,11 @@ public class Multiply : Operation
     public Multiply() : base(null, null) { }
 }
 
-public class Subtract : Operation
+public class Minus : Operation
 {
-    public Subtract(SyntaxNode left, SyntaxNode right) : base(left, right) { }
+    public Minus(SyntaxNode left, SyntaxNode right) : base(left, right) { }
 
-    public Subtract() : base(null, null) { }
+    public Minus() : base(null, null) { }
 }
 
 public class Divide : Operation
@@ -170,27 +170,26 @@ public class TokensToASTParser
         else if (tokens.Count >= 7 && tokens[0].Type == TokenType.Keyword
                     && tokens[0].Lexeme == "if")
         {
-            var conditionMiddleIndex = tokens.FindIndex(t => t.Type == TokenType.Operator && t.Lexeme == "=");
-            var conditionLeftTokens = tokens.Skip(2).SkipLast(tokens.Count - conditionMiddleIndex).ToList();
-            int conditionEndIndex = conditionMiddleIndex + 1;
-            for (int i = conditionMiddleIndex + 1; i < tokens.Count - 1; i++)
-            {
-                if (tokens[i].Lexeme == ")" && tokens[i + 1].Lexeme == "(")
-                {
-                    conditionEndIndex = i;
-                    break;
-                }
-            }
-            var conditionRightTokens = tokens.Skip(conditionMiddleIndex + 1).SkipLast(tokens.Count - conditionEndIndex).ToList();
+            var thenKeywordIndex = tokens.FindIndex(t => t.Type == TokenType.Keyword && t.Lexeme == "then");
+            if (thenKeywordIndex == -1) return new UnknownSyntax("then keyword is absent!");
+
+            if (tokens[1].Lexeme != "(" && tokens[thenKeywordIndex - 1].Lexeme != ")") return new UnknownSyntax("Condition must be in bracket!");
+
+            var conditionTokens = tokens.Skip(2).Take(thenKeywordIndex - 3).ToList();
+
+            var conditionMiddleIndex = conditionTokens.FindIndex(t => t.Type == TokenType.Operator && t.Lexeme == "=");
+            var conditionLeftTokens = conditionTokens.Take(conditionMiddleIndex).ToList();
+            var conditionRightTokens = conditionTokens.Skip(conditionMiddleIndex + 1).ToList();
 
             var conditionLeftExpr = ParseExpression(conditionLeftTokens);
             var conditionRightExpr = ParseExpression(conditionRightTokens);
 
-            // var conditionTokens = tokens.Skip(2).SkipLast(4).ToList();
-            // var condition = ParseExpression(conditionTokens);
+            if (conditionLeftExpr is UnknownSyntax leftError) return leftError;
+            if (conditionRightExpr is UnknownSyntax rightError) return rightError;
 
-            var trueTokens = tokens.Skip(conditionEndIndex + 2).SkipLast(1).ToList();
+            var trueTokens = tokens.Skip(thenKeywordIndex + 1).ToList();
             var trueExpr = Parse(trueTokens);
+            if (trueExpr is UnknownSyntax) return trueExpr;
 
             var ifFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, trueExpr);
             return ifFunc;
@@ -229,42 +228,9 @@ public class TokensToASTParser
         return syntaxNode;
     }
 
-    private List<Token> ConvertNegativeNumbers(List<Token> tokens)
+    public SyntaxNode Parse(Token token)
     {
-        var convertedTokens = new List<Token>();
-
-        for (int i = 0; i < tokens.Count - 1; i++)
-        {
-            var token = tokens[i];
-            if (token.Type == TokenType.Operator && token.Lexeme == "-")
-            {
-                if (i == 0 && (tokens[i + 1].Type == TokenType.Letter || tokens[i + 1].Type == TokenType.Digit))
-                {
-                    // var zeroSubNumOrVar = new List<Token>
-                    // {
-                    //     new Token(TokenType.Bracket, "("),
-                    //     new Token(TokenType.Digit, "0"),
-                    //     new Token(TokenType.Operator,"-"),
-                    //     new Token(tokens[i+1].Type, tokens[i+1].Lexeme),
-                    //     new Token(TokenType.Bracket, ")"),
-                    // };
-                    // tokens.RemoveRange(i, i + 1);
-                    // zeroSubNumOrVar.AddRange(tokens);
-
-                    convertedTokens.Add(new Token(TokenType.Bracket, "("));
-                    convertedTokens.Add(new Token(TokenType.Digit, "0"));
-                    convertedTokens.Add(new Token(TokenType.Operator, "-"));
-                    convertedTokens.Add(new Token(tokens[i + 1].Type, tokens[i + 1].Lexeme));
-                    convertedTokens.Add(new Token(TokenType.Bracket, ")"));
-                    i++;
-                    continue;
-                }
-                // else convertedTokens.Add(token);
-            }
-            convertedTokens.Add(token);
-        }
-        convertedTokens.Add(tokens.Last());
-        return convertedTokens;
+        return Parse(new List<Token> { token });
     }
 
     private SyntaxNode CheckExpression(List<Token> tokens)
@@ -288,24 +254,32 @@ public class TokensToASTParser
         return null;
     }
 
-    public SyntaxNode ParseExpression(List<Token> tokens)
+    public SyntaxNode ParseExpression(List<Token> tokens, int startToken = 0)
     {
         SyntaxNode expresion = new UnknownSyntax("Expression error!");
 
         var exprError = CheckExpression(tokens);
         if (exprError != null) return exprError;
 
-        tokens = ConvertNegativeNumbers(tokens);
-
         Stack<Operation> operators = new Stack<Operation>();
         Stack<SyntaxNode> operands = new Stack<SyntaxNode>();
 
-        for (int i = 0; i < tokens.Count; i++)
+        bool isMinus = false;
+        for (int i = startToken; i < tokens.Count; i++)
         {
             var token = tokens[i];
             if (token.Type == TokenType.Digit || token.Type == TokenType.Letter)
             {
-                var constOrVar = Parse(new List<Token> { token });
+                var constOrVar = Parse(token);
+                if (isMinus)
+                {
+                    var zeroConst = Parse(new Token(TokenType.Digit, "0"));
+                    var minusExpr = operators.Pop();
+                    minusExpr.Left = zeroConst;
+                    minusExpr.Right = constOrVar;
+                    constOrVar = minusExpr;
+                    isMinus = false;
+                }
                 operands.Push(constOrVar);
             }
             else if (token.Type == TokenType.Operator || token.Type == TokenType.Bracket)
@@ -314,52 +288,60 @@ public class TokensToASTParser
                 {
                     "+" => new Plus(),
                     "*" => new Multiply(),
+                    "-" => new Minus(),
+                    "/" => new Divide(),
                     "(" => new BracketOperation(true),
                     ")" => new BracketOperation(false),
                     _ => new UnknownOperation($"Operator '{token.Lexeme}' is not supported.")
                 };
 
-                if (operators.Count == 0 || (newOperation is BracketOperation bracket && bracket.IsOpen))
+                if (newOperation is BracketOperation openBracket && openBracket.IsOpen)
                 {
+                    var expr = ParseExpression(tokens, i + 1);
+                    if (isMinus)
+                    {
+                        var zeroConst = Parse(new Token(TokenType.Digit, "0"));
+                        var minusExpr = operators.Pop();
+                        minusExpr.Left = zeroConst;
+                        minusExpr.Right = expr;
+                        expr = minusExpr;
+                        isMinus = false;
+                    }
+                    operands.Push(expr);
+                    i--;
+                    continue;
+                }
+                if (newOperation is BracketOperation closeBracket && !closeBracket.IsOpen)
+                {
+                    tokens.RemoveRange(startToken - 1, i - startToken + 2);
+                    break;
+                }
+                if (operators.Count == 0)
+                {
+                    if (newOperation is Minus && i == startToken) isMinus = true;
                     operators.Push(newOperation);
                 }
                 else
                 {
-                    if (newOperation is BracketOperation closeBracket && !closeBracket.IsOpen)
+                    if (operators.Count >= 1)
                     {
-                        while (operators.Count != 0)
+                        var prevOp = operators.Pop();
+                        if (GetOperationWeight(prevOp) > GetOperationWeight(newOperation))
                         {
-                            var op = operators.Pop();
-                            if (op is BracketOperation openBracket && openBracket.IsOpen) break;
-                            var rightOperand = operands.Pop();
-                            var leftOperands = operands.Pop();
-                            op.Left = leftOperands;
-                            op.Right = rightOperand;
-                            operands.Push(op);
+                            var prevOpRightOperand = operands.Pop();
+                            var prevOpLeftOperand = operands.Pop();
+                            prevOp.Right = prevOpRightOperand;
+                            prevOp.Left = prevOpLeftOperand;
+                            operands.Push(prevOp);
+                            i--;
+                            continue;
                         }
-                    }
-                    else
-                    {
-                        if (operators.Count >= 1)
+                        else
                         {
-                            var prevOp = operators.Pop();
-                            if (GetOperationWeight(prevOp) > GetOperationWeight(newOperation))
-                            {
-                                var prevOpRightOperand = operands.Pop();
-                                var prevOpLeftOperand = operands.Pop();
-                                prevOp.Right = prevOpRightOperand;
-                                prevOp.Left = prevOpLeftOperand;
-                                operands.Push(prevOp);
-                                i--;
-                                continue;
-                            }
-                            else
-                            {
-                                operators.Push(prevOp);
-                                operators.Push(newOperation);
-                            }
+                            operators.Push(prevOp);
+                            operators.Push(newOperation);
+                        }
 
-                        }
                     }
                 }
             }
@@ -382,8 +364,9 @@ public class TokensToASTParser
         return operation switch
         {
             Plus => 1,
+            Minus => 1,
             Multiply => 2,
-            // BracketOperation => 3,
+            Divide => 2,
             _ => 0
         };
     }

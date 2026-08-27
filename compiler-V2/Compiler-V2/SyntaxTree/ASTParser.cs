@@ -57,6 +57,18 @@ public class ASTParser
             var right = Parse(multiply.Right);
             expr = Expression.Multiply(left, right);
         }
+        else if (syntaxNode is Minus minus)
+        {
+            var left = Parse(minus.Left);
+            var right = Parse(minus.Right);
+            expr = Expression.Subtract(left, right);
+        }
+        else if (syntaxNode is Divide divide)
+        {
+            var left = Parse(divide.Left);
+            var right = Parse(divide.Right);
+            expr = Expression.Divide(left, right);
+        }
         else if (syntaxNode is Constant constant)
         {
             expr = Expression.Constant(constant.Value);
