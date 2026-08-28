@@ -5,13 +5,6 @@ public class ASTParser
     public Expression Parse(SyntaxNode syntaxNode)
     {
         Expression expr = Expression.Empty();
-        // if (syntaxNode is Variable variable)
-        // {
-        //     var res = VariableManager.GetVariable(variable.Name);
-        //     var displayResult = Expression.Call(typeof(Console).GetMethod("WriteLine",
-        //                                         new[] { typeof(int) }), res);
-        //     expr = displayResult;
-        // }
         if (syntaxNode is Function func)
         {
             if (func.Name == "write")
@@ -26,15 +19,13 @@ public class ASTParser
                 var leftCond = Parse(func.Body[0]);
                 var rightCond = Parse(func.Body[1]);
                 var trueExpr = Parse(func.Body[2]);
-                // var trueExpr = Expression.Block(Parse(func.Body[2]));
 
-                var falseExpr = Expression.Call(typeof(Console).GetMethod("WriteLine",
-                                    new[] { typeof(string) }), Expression.Constant("false"));
-                // var falseExpr = Expression.Block(Expression.Call(typeof(Console).GetMethod("WriteLine",
-                //                     new[] { typeof(string) }), Expression.Constant("false")));
-                // expr = Expression.Condition(Expression.Equal(leftCond, rightCond),
-                //                                 trueExpr, falseExpr);
-
+                if (func.Body.Count == 4)
+                {
+                    var falseExpr = Parse(func.Body[3]);
+                    expr = Expression.IfThenElse(Expression.Equal(leftCond, rightCond), trueExpr, falseExpr);
+                    return expr;
+                }
                 expr = Expression.IfThen(Expression.Equal(leftCond, rightCond), trueExpr);
             }
         }

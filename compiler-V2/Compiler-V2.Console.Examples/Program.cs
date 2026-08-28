@@ -80,7 +80,7 @@ var source = "if(1=0+1)then if(2=0+1+1) then if(3=0+1+2)then write(111)";
 
 // var lexer = new Lexer(source);
 var lexer = new Lexer();
-lexer.Keywords = new List<string> { "if", "then", "write" };
+lexer.Keywords = new List<string> { "if", "then", "else", "write" };
 
 var compiler = new Compiler(lexer);
 compiler.ScanFile(@"../../../Pascal/program.ps");

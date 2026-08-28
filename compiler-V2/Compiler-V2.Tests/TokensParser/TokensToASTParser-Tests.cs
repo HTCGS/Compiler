@@ -3,7 +3,7 @@ public class TokensToASTParser_Tests
     [Fact]
     public void Parse_EmptyTokens_ReturnUnknownSyntax()
     {
-        var tokenParser = new TokensToASTParser();
+        var tokenParser = new TokenParser();
         var tokens = new List<Token>();
 
         var result = tokenParser.Parse(tokens);
@@ -22,7 +22,7 @@ public class TokensToASTParser_Tests
     {
         var lexer = new Lexer(digit);
         var digitToken = lexer.Scan();
-        var tokenParser = new TokensToASTParser();
+        var tokenParser = new TokenParser();
 
         var result = tokenParser.Parse(digitToken);
 
@@ -41,7 +41,7 @@ public class TokensToASTParser_Tests
     {
         var lexer = new Lexer(letter);
         var digitToken = lexer.Scan();
-        var tokenParser = new TokensToASTParser();
+        var tokenParser = new TokenParser();
 
         var result = tokenParser.Parse(digitToken);
 
@@ -60,7 +60,7 @@ public class TokensToASTParser_Tests
     {
         var lexer = new Lexer(input);
         var additionTokens = lexer.Scan();
-        var tokenParser = new TokensToASTParser();
+        var tokenParser = new TokenParser();
 
         var result = tokenParser.ParseExpression(additionTokens);
 
@@ -78,7 +78,7 @@ public class TokensToASTParser_Tests
     {
         var lexer = new Lexer(input);
         var multiplyTokens = lexer.Scan();
-        var tokenParser = new TokensToASTParser();
+        var tokenParser = new TokenParser();
 
         var result = tokenParser.ParseExpression(multiplyTokens);
 

@@ -125,7 +125,7 @@ class Return : SyntaxNode
 
 
 
-public class TokensToASTParser
+public class TokenParser
 {
     public SyntaxNode Parse(List<Token> tokens)
     {
@@ -187,11 +187,28 @@ public class TokensToASTParser
             if (conditionLeftExpr is UnknownSyntax leftError) return leftError;
             if (conditionRightExpr is UnknownSyntax rightError) return rightError;
 
-            var trueTokens = tokens.Skip(thenKeywordIndex + 1).ToList();
-            var trueExpr = Parse(trueTokens);
-            if (trueExpr is UnknownSyntax) return trueExpr;
+            var thenBlockTokens = tokens.Skip(thenKeywordIndex + 1).ToList();
 
-            var ifFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, trueExpr);
+            var elseKeywordIndex = thenBlockTokens.FindIndex(t => t.Type == TokenType.Keyword && t.Lexeme == "else");
+            if (elseKeywordIndex != -1)
+            {
+                var trueTokens = thenBlockTokens.Take(elseKeywordIndex).ToList();
+                var falseTokens = thenBlockTokens.Skip(elseKeywordIndex + 1).ToList();
+
+                var trueExpr = Parse(trueTokens);
+                var falseExpr = Parse(falseTokens);
+
+                if (trueExpr is UnknownSyntax) return trueExpr;
+                if (falseExpr is UnknownSyntax) return falseExpr;
+
+                var ifElseFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, trueExpr, falseExpr);
+                return ifElseFunc;
+            }
+
+            var onlyTrueExpr = Parse(thenBlockTokens);
+            if (onlyTrueExpr is UnknownSyntax) return onlyTrueExpr;
+
+            var ifFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, onlyTrueExpr);
             return ifFunc;
         }
         else if (tokens.Count >= 2 && tokens[1].Type == TokenType.Operator)

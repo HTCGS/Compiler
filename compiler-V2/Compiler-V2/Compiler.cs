@@ -3,19 +3,19 @@ using System.Linq.Expressions;
 public class Compiler
 {
     public Lexer Lexer;
-    public TokensToASTParser TokenParser;
+    public TokenParser TokenParser;
     public ASTParser AstParser;
 
-    public List<List<Token>> Tokens;
+    public List<List<Token>> TokenTable;
     public List<SyntaxNode> AST;
     public List<Expression> Code;
 
     public Compiler()
     {
         this.Lexer = new Lexer();
-        this.TokenParser = new TokensToASTParser();
+        this.TokenParser = new TokenParser();
         this.AstParser = new ASTParser();
-        this.Tokens = new List<List<Token>>();
+        this.TokenTable = new List<List<Token>>();
         this.AST = new List<SyntaxNode>();
         this.Code = new List<Expression>();
     }
@@ -25,7 +25,7 @@ public class Compiler
         this.Lexer = lexer;
     }
 
-    public Compiler(Lexer lexer, TokensToASTParser tokenParser)
+    public Compiler(Lexer lexer, TokenParser tokenParser)
     {
         this.Lexer = lexer;
         this.TokenParser = tokenParser;
@@ -46,7 +46,7 @@ public class Compiler
             foreach (var line in text)
             {
                 var tokenLine = Lexer.Scan(line);
-                if (tokenLine.Count != 0) this.Tokens.Add(tokenLine);
+                if (tokenLine.Count != 0) this.TokenTable.Add(tokenLine);
             }
         }
         return tokens;
@@ -54,13 +54,15 @@ public class Compiler
 
     public List<SyntaxNode> ParseTokens()
     {
-        foreach (var lineOfTokens in this.Tokens)
+        foreach (var lineOfTokens in this.TokenTable)
         {
             var expr = TokenParser.Parse(lineOfTokens);
             if (expr is not UnknownSyntax) this.AST.Add(expr);
             else
             {
                 System.Console.WriteLine(expr.Name);
+                this.AST.Clear();
+                this.AST.Add(expr);
                 return new List<SyntaxNode> { expr };
             }
         }
