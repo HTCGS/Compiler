@@ -43,7 +43,7 @@ public class Lexer
                 continue;
             }
             currentTokenType = GetTokenType(chr);
-            if (currentTokenType == TokenType.Unknown) return new List<Token>();
+            if (currentTokenType == TokenType.Unknown) return new List<Token>() { new Token(TokenType.Unknown, chr.ToString()) };
             if (currentTokenType == prevTokenType)
             {
                 if (currentTokenType != TokenType.Operator && currentTokenType != TokenType.Bracket)

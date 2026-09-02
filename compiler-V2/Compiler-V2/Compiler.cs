@@ -43,10 +43,19 @@ public class Compiler
         var text = File.ReadAllLines(System.IO.Path.GetFullPath(filePath));
         if (text.Length != 0)
         {
+            int lineNumber = 0;
             foreach (var line in text)
             {
+                lineNumber++;
+                if (line.Count() == 0) continue;
                 var tokenLine = Lexer.Scan(line);
-                if (tokenLine.Count != 0) this.TokenTable.Add(tokenLine);
+                if (tokenLine.Count == 1 && tokenLine[0].Type == TokenType.Unknown)
+                {
+                    this.TokenTable.Clear();
+                    System.Console.WriteLine($"Error: Invalid token found in line {lineNumber}: '{tokenLine[0].Lexeme}'");
+                    return null;
+                }
+                this.TokenTable.Add(tokenLine);
             }
         }
         return tokens;
