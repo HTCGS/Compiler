@@ -88,6 +88,8 @@ compiler.ParseTokens();
 compiler.ParseAST();
 compiler.ExecuteCode();
 
+
+
 // var tokens = lexer.Scan();
 
 // Console.WriteLine("Tokens:");
@@ -96,8 +98,14 @@ compiler.ExecuteCode();
 //     Console.WriteLine($"  {token.Type}: {token.Lexeme}");
 // }
 
-// var parser = new TokensToASTParser();
+// var parser = new TokenParser();
 // var syntaxTree = parser.Parse(tokens);
+
+// if (syntaxTree is UnknownSyntax unknownSyntax)
+// {
+//     Console.WriteLine($"Error: {unknownSyntax.Name}");
+//     return;
+// }
 
 // var astParser = new ASTParser();
 // var expression = astParser.Parse(syntaxTree);

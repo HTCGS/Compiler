@@ -1,116 +1,15 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-public abstract class SyntaxNode
-{
-    public string Name { get; set; }
-}
+// public class BracketOperation : Operation
+// {
+//     public bool IsOpen;
 
-public class UnknownSyntax : SyntaxNode
-{
-    public UnknownSyntax(string name)
-    {
-        this.Name = name;
-    }
-}
-
-class Function : SyntaxNode
-{
-    public List<SyntaxNode> Body { get; set; } = new List<SyntaxNode>();
-
-    public Function(string name, params SyntaxNode[] body)
-    {
-        this.Name = name;
-        this.Body.AddRange(body);
-    }
-}
-
-public class Variable : SyntaxNode
-{
-    public Variable(string name)
-    {
-        this.Name = name;
-    }
-}
-
-public abstract class Operation : SyntaxNode
-{
-    public SyntaxNode Left { get; set; }
-    public SyntaxNode Right { get; set; }
-
-    public Operation(SyntaxNode left = null, SyntaxNode right = null)
-    {
-        this.Left = left ?? new UnknownSyntax("Unknown");
-        this.Right = right ?? new UnknownSyntax("Unknown");
-    }
-}
-
-public class UnknownOperation : Operation
-{
-    public UnknownOperation(string errorMessage) : base(null, null)
-    {
-        this.Name = errorMessage;
-    }
-}
-
-public class Assign : SyntaxNode
-{
-    public Variable Variable { get; set; }
-    public SyntaxNode Expression { get; set; }
-
-    public Assign(Variable variable, SyntaxNode expression)
-    {
-        this.Variable = variable;
-        this.Expression = expression;
-    }
-}
-public class Plus : Operation
-{
-    public Plus(SyntaxNode left, SyntaxNode right) : base(left, right) { }
-
-    public Plus() : base(null, null) { }
-}
-
-public class Multiply : Operation
-{
-    public Multiply(SyntaxNode left, SyntaxNode right) : base(left, right) { }
-
-    public Multiply() : base(null, null) { }
-}
-
-public class Minus : Operation
-{
-    public Minus(SyntaxNode left, SyntaxNode right) : base(left, right) { }
-
-    public Minus() : base(null, null) { }
-}
-
-public class Divide : Operation
-{
-    public Divide(SyntaxNode left, SyntaxNode right) : base(left, right) { }
-
-    public Divide() : base(null, null) { }
-}
-
-public class BracketOperation : Operation
-{
-    public bool IsOpen;
-
-    public BracketOperation(bool isOpen)
-    {
-        this.IsOpen = isOpen;
-    }
-}
-
-public class Constant : SyntaxNode
-{
-    public int Value { get; set; }
-
-    public Constant(int value)
-    {
-        this.Value = value;
-    }
-}
+//     public BracketOperation(bool isOpen)
+//     {
+//         this.IsOpen = isOpen;
+//     }
+// }
 
 class Return : SyntaxNode
 {
@@ -299,20 +198,9 @@ public class TokenParser
                 }
                 operands.Push(constOrVar);
             }
-            else if (token.Type == TokenType.Operator || token.Type == TokenType.Bracket)
+            else if (token.Type == TokenType.Bracket)
             {
-                Operation newOperation = token.Lexeme switch
-                {
-                    "+" => new Plus(),
-                    "*" => new Multiply(),
-                    "-" => new Minus(),
-                    "/" => new Divide(),
-                    "(" => new BracketOperation(true),
-                    ")" => new BracketOperation(false),
-                    _ => new UnknownOperation($"Operator '{token.Lexeme}' is not supported.")
-                };
-
-                if (newOperation is BracketOperation openBracket && openBracket.IsOpen)
+                if (token.Lexeme == "(")
                 {
                     var expr = ParseExpression(tokens, i + 1);
                     if (isMinus)
@@ -328,11 +216,20 @@ public class TokenParser
                     i--;
                     continue;
                 }
-                if (newOperation is BracketOperation closeBracket && !closeBracket.IsOpen)
+                tokens.RemoveRange(startToken - 1, i - startToken + 2);
+                break;
+            }
+            else if (token.Type == TokenType.Operator)
+            {
+                Operation newOperation = token.Lexeme switch
                 {
-                    tokens.RemoveRange(startToken - 1, i - startToken + 2);
-                    break;
-                }
+                    "+" => new Plus(),
+                    "*" => new Multiply(),
+                    "-" => new Minus(),
+                    "/" => new Divide(),
+                    _ => new UnknownOperation($"Operator '{token.Lexeme}' is not supported.")
+                };
+
                 if (operators.Count == 0)
                 {
                     if (newOperation is Minus && i == startToken) isMinus = true;
