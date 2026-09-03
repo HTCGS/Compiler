@@ -31,15 +31,21 @@ public class Compiler
         this.TokenParser = tokenParser;
     }
 
-    public List<Token> Scan(string source)
+    public Compiler Scan(string source)
     {
         var tokens = Lexer.Scan(source);
-        return tokens;
+        if (tokens.Count == 1 && tokens[0].Type == TokenType.Unknown)
+        {
+            this.TokenTable.Clear();
+            System.Console.WriteLine($"Error: Invalid token found: '{tokens[0].Lexeme}'");
+            return null;
+        }
+        this.TokenTable.Add(tokens);
+        return this;
     }
 
-    public List<List<Token>> ScanFile(string filePath)
+    public Compiler ScanFile(string filePath)
     {
-        var tokens = new List<List<Token>>();
         var text = File.ReadAllLines(System.IO.Path.GetFullPath(filePath));
         if (text.Length != 0)
         {
@@ -58,10 +64,10 @@ public class Compiler
                 this.TokenTable.Add(tokenLine);
             }
         }
-        return tokens;
+        return this;
     }
 
-    public List<SyntaxNode> ParseTokens()
+    public Compiler ParseTokens()
     {
         foreach (var lineOfTokens in this.TokenTable)
         {
@@ -72,23 +78,22 @@ public class Compiler
                 System.Console.WriteLine(expr.Name);
                 this.AST.Clear();
                 this.AST.Add(expr);
-                return new List<SyntaxNode> { expr };
             }
         }
-        return this.AST;
+        return this;
     }
 
-    public List<Expression> ParseAST()
+    public Compiler ParseAST()
     {
         foreach (var astElement in this.AST)
         {
             var expr = AstParser.Parse(astElement);
             this.Code.Add(expr);
         }
-        return this.Code;
+        return this;
     }
 
-    public void ExecuteCode()
+    public Compiler ExecuteCode()
     {
         try
         {
@@ -101,6 +106,7 @@ public class Compiler
         {
             System.Console.WriteLine(e.Message);
         }
+        return this;
     }
 
 

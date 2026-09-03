@@ -5,6 +5,7 @@ public class Assign : SyntaxNode
 
     public Assign(Variable variable, SyntaxNode expression)
     {
+        this.Name = "Assing";
         this.Variable = variable;
         this.Expression = expression;
     }

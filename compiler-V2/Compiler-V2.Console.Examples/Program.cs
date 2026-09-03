@@ -59,7 +59,7 @@ var compiled = lambda.Compile();
 // var source = "a = (1*2)*(3*(4*5))";
 // var source = "a = (1+2)*(3+(4*5))";
 // var source = "a = (1+2)+(3+(4+(5+6)))";
-// var source = "a = (1+2)+(3+(4+(5*6+7)))";
+var source = "a = (1+2)+(3+(4+(5*6+7)))";
 
 //========================================
 // var source = "a = -1 -1-1 -1-(-2+3) -(1+2)";
@@ -75,19 +75,41 @@ var compiled = lambda.Compile();
 //=========================================
 // var source = "write((123))";
 // var source = "write((1+2)*3)";
-var source = "if(1=0+1)then if(2=0+1+1) then if(3=0+1+2)then write(111)";
+// var source = "if(1=0+1)then if(2=0+1+1) then if(3=0+1+2)then write(111)";
 // var source = "if(6+2=(2+2)*2)then a = 55";
 
 // var lexer = new Lexer(source);
 var lexer = new Lexer();
 lexer.Keywords = new List<string> { "if", "then", "else", "write" };
+lexer.Source = source;
 
 var compiler = new Compiler(lexer);
-compiler.ScanFile(@"../../../Pascal/program.ps");
-compiler.ParseTokens();
-compiler.ParseAST();
-compiler.ExecuteCode();
+// compiler.ScanFile(@"../../../Pascal/program.ps");
+// compiler.Scan(source)
+//         .Scan("write(123456789)")
+//         .ParseTokens()
+//         .ParseAST()
+//         .ExecuteCode();
 
+compiler.Scan(source)
+        .ParseTokens();
+
+var syntaxTree = compiler.AST;
+syntaxTree.First().Print();
+
+
+// var tokens = lexer.Scan();
+// tokens.PrintTokens();
+
+
+// Console.WriteLine("Token table:");
+// Console.WriteLine("{0,-15} | {1}", "Type", "Lexeme");
+// Console.WriteLine(new string('-', 30));
+
+// foreach (var token in tokens)
+// {
+//     Console.WriteLine("{0,-15} | {1}", token.Type, token.Lexeme);
+// }
 
 
 // var tokens = lexer.Scan();

@@ -1,16 +1,6 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-// public class BracketOperation : Operation
-// {
-//     public bool IsOpen;
-
-//     public BracketOperation(bool isOpen)
-//     {
-//         this.IsOpen = isOpen;
-//     }
-// }
-
 class Return : SyntaxNode
 {
     public SyntaxNode Expression { get; set; }
