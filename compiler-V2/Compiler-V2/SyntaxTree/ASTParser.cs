@@ -14,20 +14,18 @@ public class ASTParser
                                     new[] { typeof(int) }), arg);
                 return writeLine;
             }
-            else if (func.Name == "if")
+        }
+        else if (syntaxNode is IfThenElse ifThenElse)
+        {
+            var cond = Parse(ifThenElse.Condition);
+            var trueExpr = Parse(ifThenElse.TrueExpression);
+            if (ifThenElse.FalseExpression is not null)
             {
-                var leftCond = Parse(func.Body[0]);
-                var rightCond = Parse(func.Body[1]);
-                var trueExpr = Parse(func.Body[2]);
-
-                if (func.Body.Count == 4)
-                {
-                    var falseExpr = Parse(func.Body[3]);
-                    expr = Expression.IfThenElse(Expression.Equal(leftCond, rightCond), trueExpr, falseExpr);
-                    return expr;
-                }
-                expr = Expression.IfThen(Expression.Equal(leftCond, rightCond), trueExpr);
+                var falseExpr = Parse(ifThenElse.FalseExpression);
+                expr = Expression.IfThenElse(cond, trueExpr, falseExpr);
+                return expr;
             }
+            expr = Expression.IfThen(cond, trueExpr);
         }
         else if (syntaxNode is Assign assign)
         {
@@ -59,6 +57,24 @@ public class ASTParser
             var left = Parse(divide.Left);
             var right = Parse(divide.Right);
             expr = Expression.Divide(left, right);
+        }
+        else if (syntaxNode is IsEqual isEqual)
+        {
+            var left = Parse(isEqual.Left);
+            var right = Parse(isEqual.Right);
+            expr = Expression.Equal(left, right);
+        }
+        else if (syntaxNode is IsGreater isGreater)
+        {
+            var left = Parse(isGreater.Left);
+            var right = Parse(isGreater.Right);
+            expr = Expression.GreaterThan(left, right);
+        }
+        else if (syntaxNode is IsLess isLess)
+        {
+            var left = Parse(isLess.Left);
+            var right = Parse(isLess.Right);
+            expr = Expression.LessThan(left, right);
         }
         else if (syntaxNode is Constant constant)
         {

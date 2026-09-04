@@ -171,7 +171,7 @@ public class Lexer
 
         if ("abcdeifwrthnls".Contains(chr)) tokenType = TokenType.Letter;
         else if (char.IsDigit(chr)) tokenType = TokenType.Digit;
-        else if ("=+-*/".Contains(chr)) tokenType = TokenType.Operator;
+        else if ("=+-*/<>".Contains(chr)) tokenType = TokenType.Operator;
         else if ("()".Contains(chr)) tokenType = TokenType.Bracket;
 
         return tokenType;

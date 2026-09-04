@@ -65,16 +65,7 @@ public class TokenParser
             if (tokens[1].Lexeme != "(" && tokens[thenKeywordIndex - 1].Lexeme != ")") return new UnknownSyntax("Condition must be in bracket!");
 
             var conditionTokens = tokens.Skip(2).Take(thenKeywordIndex - 3).ToList();
-
-            var conditionMiddleIndex = conditionTokens.FindIndex(t => t.Type == TokenType.Operator && t.Lexeme == "=");
-            var conditionLeftTokens = conditionTokens.Take(conditionMiddleIndex).ToList();
-            var conditionRightTokens = conditionTokens.Skip(conditionMiddleIndex + 1).ToList();
-
-            var conditionLeftExpr = ParseExpression(conditionLeftTokens);
-            var conditionRightExpr = ParseExpression(conditionRightTokens);
-
-            if (conditionLeftExpr is UnknownSyntax leftError) return leftError;
-            if (conditionRightExpr is UnknownSyntax rightError) return rightError;
+            var conditionExp = ParseExpression(conditionTokens);
 
             var thenBlockTokens = tokens.Skip(thenKeywordIndex + 1).ToList();
 
@@ -90,15 +81,52 @@ public class TokenParser
                 if (trueExpr is UnknownSyntax) return trueExpr;
                 if (falseExpr is UnknownSyntax) return falseExpr;
 
-                var ifElseFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, trueExpr, falseExpr);
-                return ifElseFunc;
+                var ifElse = new IfThenElse(conditionExp, trueExpr, falseExpr);
+                return ifElse;
             }
 
             var onlyTrueExpr = Parse(thenBlockTokens);
             if (onlyTrueExpr is UnknownSyntax) return onlyTrueExpr;
 
-            var ifFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, onlyTrueExpr);
-            return ifFunc;
+            var ifThen = new IfThenElse(conditionExp, onlyTrueExpr);
+            return ifThen;
+
+
+
+            // var conditionMiddleIndex = conditionTokens.FindIndex(t => t.Type == TokenType.Operator && t.Lexeme == "=");
+            // var conditionLeftTokens = conditionTokens.Take(conditionMiddleIndex).ToList();
+            // var conditionRightTokens = conditionTokens.Skip(conditionMiddleIndex + 1).ToList();
+
+
+            // var conditionLeftExpr = ParseExpression(conditionLeftTokens);
+            // var conditionRightExpr = ParseExpression(conditionRightTokens);
+
+            // if (conditionLeftExpr is UnknownSyntax leftError) return leftError;
+            // if (conditionRightExpr is UnknownSyntax rightError) return rightError;
+
+            // var thenBlockTokens = tokens.Skip(thenKeywordIndex + 1).ToList();
+
+            // var elseKeywordIndex = thenBlockTokens.FindIndex(t => t.Type == TokenType.Keyword && t.Lexeme == "else");
+            // if (elseKeywordIndex != -1)
+            // {
+            //     var trueTokens = thenBlockTokens.Take(elseKeywordIndex).ToList();
+            //     var falseTokens = thenBlockTokens.Skip(elseKeywordIndex + 1).ToList();
+
+            //     var trueExpr = Parse(trueTokens);
+            //     var falseExpr = Parse(falseTokens);
+
+            //     if (trueExpr is UnknownSyntax) return trueExpr;
+            //     if (falseExpr is UnknownSyntax) return falseExpr;
+
+            //     var ifElseFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, trueExpr, falseExpr);
+            //     return ifElseFunc;
+            // }
+
+            // var onlyTrueExpr = Parse(thenBlockTokens);
+            // if (onlyTrueExpr is UnknownSyntax) return onlyTrueExpr;
+
+            // var ifFunc = new Function(tokens[0].Lexeme, conditionLeftExpr, conditionRightExpr, onlyTrueExpr);
+            // return ifFunc;
         }
         else if (tokens.Count >= 2 && tokens[1].Type == TokenType.Operator)
         {
@@ -160,7 +188,34 @@ public class TokenParser
         return null;
     }
 
-    public SyntaxNode ParseExpression(List<Token> tokens, int startToken = 0)
+    public SyntaxNode ParseExpression(List<Token> tokens)
+    {
+        int compTokenIndex = tokens.FindIndex(t => t.Type == TokenType.Operator && (t.Lexeme == "=" || t.Lexeme == "<" || t.Lexeme == ">"));
+        if (compTokenIndex != -1)
+        {
+            // = < > <= >= <>
+            var compToken = tokens[compTokenIndex];
+            var leftTokens = tokens.Take(compTokenIndex).ToList();
+            var rightTokens = tokens.Skip(compTokenIndex + 1).ToList();
+
+            Operation compExpr = compToken.Lexeme switch
+            {
+                "=" => new IsEqual(),
+                "<" => new IsLess(),
+                ">" => new IsGreater(),
+                _ => new UnknownOperation($"Operator '{compToken.Lexeme}' is not supported.")
+            };
+
+            var leftExpr = ParseExpression(leftTokens);
+            var rightExpr = ParseExpression(rightTokens);
+            compExpr.Left = leftExpr;
+            compExpr.Right = rightExpr;
+            return compExpr;
+        }
+        return this.ParseExpression(tokens, 0);
+    }
+
+    private SyntaxNode ParseExpression(List<Token> tokens, int startToken = 0)
     {
         SyntaxNode expresion = new UnknownSyntax("Expression error!");
 

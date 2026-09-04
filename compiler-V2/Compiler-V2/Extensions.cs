@@ -50,6 +50,41 @@ public static class Extensions
             }
             operation.Right.Print(depth + 1);
         }
+        else if (node is IfThenElse ifThenElse)
+        {
+            System.Console.WriteLine($"{ifThenElse.Name}:");
+            System.Console.Write("|-");
+            for (int i = 0; i < depth; i++)
+            {
+                System.Console.Write("-");
+            }
+            ifThenElse.Condition.Print(depth + 1);
+            System.Console.Write("|-");
+            for (int i = 0; i < depth; i++)
+            {
+                System.Console.Write("-");
+            }
+            ifThenElse.TrueExpression.Print(depth + 1);
+            if (ifThenElse.FalseExpression is not null)
+            {
+                System.Console.Write("|-");
+                for (int i = 0; i < depth; i++)
+                {
+                    System.Console.Write("-");
+                }
+                ifThenElse.FalseExpression.Print(depth + 1);
+            }
+        }
+        else if (node is Function function)
+        {
+            System.Console.WriteLine($"{function.Name}:");
+            System.Console.Write("|-");
+            for (int i = 0; i < depth; i++)
+            {
+                System.Console.Write("-");
+            }
+            function.Body.First().Print();
+        }
         else if (node is Variable variable)
         {
             System.Console.WriteLine($"Variable: {variable.Name}");

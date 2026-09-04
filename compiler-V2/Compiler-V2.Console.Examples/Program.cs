@@ -59,7 +59,7 @@ var compiled = lambda.Compile();
 // var source = "a = (1*2)*(3*(4*5))";
 // var source = "a = (1+2)*(3+(4*5))";
 // var source = "a = (1+2)+(3+(4+(5+6)))";
-var source = "a = (1+2)+(3+(4+(5*6+7)))";
+// var source = "a = (1+2)+(3+(4+(5*6+7)))";
 
 //========================================
 // var source = "a = -1 -1-1 -1-(-2+3) -(1+2)";
@@ -75,8 +75,10 @@ var source = "a = (1+2)+(3+(4+(5*6+7)))";
 //=========================================
 // var source = "write((123))";
 // var source = "write((1+2)*3)";
-// var source = "if(1=0+1)then if(2=0+1+1) then if(3=0+1+2)then write(111)";
+var source = "if(1=0+1)then if(2=0+1+1) then if(3=0+1+2)then write(111)";
 // var source = "if(6+2=(2+2)*2)then a = 55";
+
+// var source = "if(6+2-1<(2+2)*2)then write(2 + 0 + 3 - 2)else write(0-1)";
 
 // var lexer = new Lexer(source);
 var lexer = new Lexer();
@@ -91,16 +93,25 @@ var compiler = new Compiler(lexer);
 //         .ParseAST()
 //         .ExecuteCode();
 
+// compiler.Scan(source)
+//         .ParseTokens();
+
+// var syntaxTree = compiler.AST;
+// syntaxTree.First().Print();
+
 compiler.Scan(source)
-        .ParseTokens();
+        .ParseTokens()
+        .ParseAST()
+        .ExecuteCode();
 
-var syntaxTree = compiler.AST;
-syntaxTree.First().Print();
 
-
-// var tokens = lexer.Scan();
+// compiler.Scan(source);
+// var tokens = compiler.TokenTable.First();
 // tokens.PrintTokens();
 
+// compiler.ParseTokens();
+var syntaxTree = compiler.AST;
+syntaxTree.First().Print();
 
 // Console.WriteLine("Token table:");
 // Console.WriteLine("{0,-15} | {1}", "Type", "Lexeme");
