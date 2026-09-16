@@ -1,6 +1,9 @@
-public class IsGreater : Operation
+namespace CompilerV2
 {
-    public IsGreater(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "IsGreater"; }
+    public class IsGreater : Operation
+    {
+        public IsGreater(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "IsGreater"; }
 
-    public IsGreater() : base(null, null) { this.Name = "IsGreater"; }
+        public IsGreater() : base(null, null) { this.Name = "IsGreater"; }
+    }
 }

@@ -1,7 +1,10 @@
-public class UnknownOperation : Operation
+namespace CompilerV2
 {
-    public UnknownOperation(string errorMessage) : base(null, null)
+    public class UnknownOperation : Operation
     {
-        this.Name = errorMessage;
+        public UnknownOperation(string errorMessage) : base(null, null)
+        {
+            this.Name = errorMessage;
+        }
     }
 }

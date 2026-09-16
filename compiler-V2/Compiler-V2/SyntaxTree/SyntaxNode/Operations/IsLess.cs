@@ -1,6 +1,9 @@
-public class IsLess : Operation
+namespace CompilerV2
 {
-    public IsLess(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "IsLess"; }
+    public class IsLess : Operation
+    {
+        public IsLess(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "IsLess"; }
 
-    public IsLess() : base(null, null) { this.Name = "IsLess"; }
+        public IsLess() : base(null, null) { this.Name = "IsLess"; }
+    }
 }

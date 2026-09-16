@@ -1,7 +1,10 @@
-public class Variable : SyntaxNode
+namespace CompilerV2
 {
-    public Variable(string name)
+    public class Variable : SyntaxNode
     {
-        this.Name = name;
+        public Variable(string name)
+        {
+            this.Name = name;
+        }
     }
 }

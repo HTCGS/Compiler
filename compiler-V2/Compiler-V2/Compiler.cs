@@ -1,113 +1,116 @@
 using System.Linq.Expressions;
 
-public class Compiler
+namespace CompilerV2
 {
-    public Lexer Lexer;
-    public TokenParser TokenParser;
-    public ASTParser AstParser;
-
-    public List<List<Token>> TokenTable;
-    public List<SyntaxNode> AST;
-    public List<Expression> Code;
-
-    public Compiler()
+    public class Compiler
     {
-        this.Lexer = new Lexer();
-        this.TokenParser = new TokenParser();
-        this.AstParser = new ASTParser();
-        this.TokenTable = new List<List<Token>>();
-        this.AST = new List<SyntaxNode>();
-        this.Code = new List<Expression>();
-    }
+        public Lexer Lexer;
+        public TokenParser TokenParser;
+        public ASTParser AstParser;
 
-    public Compiler(Lexer lexer) : this()
-    {
-        this.Lexer = lexer;
-    }
+        public List<List<Token>> TokenTable;
+        public List<SyntaxNode> AST;
+        public List<Expression> Code;
 
-    public Compiler(Lexer lexer, TokenParser tokenParser)
-    {
-        this.Lexer = lexer;
-        this.TokenParser = tokenParser;
-    }
-
-    public Compiler Scan(string source)
-    {
-        var tokens = Lexer.Scan(source);
-        if (tokens.Count == 1 && tokens[0].Type == TokenType.Unknown)
+        public Compiler()
         {
-            this.TokenTable.Clear();
-            System.Console.WriteLine($"Error: Invalid token found: '{tokens[0].Lexeme}'");
-            return null;
+            this.Lexer = new Lexer();
+            this.TokenParser = new TokenParser();
+            this.AstParser = new ASTParser();
+            this.TokenTable = new List<List<Token>>();
+            this.AST = new List<SyntaxNode>();
+            this.Code = new List<Expression>();
         }
-        this.TokenTable.Add(tokens);
-        return this;
-    }
 
-    public Compiler ScanFile(string filePath)
-    {
-        var text = File.ReadAllLines(System.IO.Path.GetFullPath(filePath));
-        if (text.Length != 0)
+        public Compiler(Lexer lexer) : this()
         {
-            int lineNumber = 0;
-            foreach (var line in text)
+            this.Lexer = lexer;
+        }
+
+        public Compiler(Lexer lexer, TokenParser tokenParser)
+        {
+            this.Lexer = lexer;
+            this.TokenParser = tokenParser;
+        }
+
+        public Compiler Scan(string source)
+        {
+            var tokens = Lexer.Scan(source);
+            if (tokens.Count == 1 && tokens[0].Type == TokenType.Unknown)
             {
-                lineNumber++;
-                if (line.Count() == 0) continue;
-                var tokenLine = Lexer.Scan(line);
-                if (tokenLine.Count == 1 && tokenLine[0].Type == TokenType.Unknown)
+                this.TokenTable.Clear();
+                System.Console.WriteLine($"Error: Invalid token found: '{tokens[0].Lexeme}'");
+                return null;
+            }
+            this.TokenTable.Add(tokens);
+            return this;
+        }
+
+        public Compiler ScanFile(string filePath)
+        {
+            var text = File.ReadAllLines(System.IO.Path.GetFullPath(filePath));
+            if (text.Length != 0)
+            {
+                int lineNumber = 0;
+                foreach (var line in text)
                 {
-                    this.TokenTable.Clear();
-                    System.Console.WriteLine($"Error: Invalid token found in line {lineNumber}: '{tokenLine[0].Lexeme}'");
-                    return null;
+                    lineNumber++;
+                    if (line.Count() == 0) continue;
+                    var tokenLine = Lexer.Scan(line);
+                    if (tokenLine.Count == 1 && tokenLine[0].Type == TokenType.Unknown)
+                    {
+                        this.TokenTable.Clear();
+                        System.Console.WriteLine($"Error: Invalid token found in line {lineNumber}: '{tokenLine[0].Lexeme}'");
+                        return null;
+                    }
+                    this.TokenTable.Add(tokenLine);
                 }
-                this.TokenTable.Add(tokenLine);
             }
+            return this;
         }
-        return this;
-    }
 
-    public Compiler ParseTokens()
-    {
-        foreach (var lineOfTokens in this.TokenTable)
+        public Compiler ParseTokens()
         {
-            var expr = TokenParser.Parse(lineOfTokens);
-            if (expr is not UnknownSyntax) this.AST.Add(expr);
-            else
+            foreach (var lineOfTokens in this.TokenTable)
             {
-                System.Console.WriteLine(expr.Name);
-                this.AST.Clear();
-                this.AST.Add(expr);
+                var expr = TokenParser.Parse(lineOfTokens);
+                if (expr is not UnknownSyntax) this.AST.Add(expr);
+                else
+                {
+                    System.Console.WriteLine(expr.Name);
+                    this.AST.Clear();
+                    this.AST.Add(expr);
+                }
             }
+            return this;
         }
-        return this;
-    }
 
-    public Compiler ParseAST()
-    {
-        foreach (var astElement in this.AST)
+        public Compiler ParseAST()
         {
-            var expr = AstParser.Parse(astElement);
-            this.Code.Add(expr);
+            foreach (var astElement in this.AST)
+            {
+                var expr = AstParser.Parse(astElement);
+                this.Code.Add(expr);
+            }
+            return this;
         }
-        return this;
-    }
 
-    public Compiler ExecuteCode()
-    {
-        try
+        public Compiler ExecuteCode()
         {
-            var allVariables = VariableManager.Variables.Select(kvp => kvp.Value).ToList();
-            var program = Expression.Block(allVariables, this.Code);
-            var compiledProgram = Expression.Lambda<Action>(program).Compile();
-            compiledProgram();
+            try
+            {
+                var allVariables = VariableManager.Variables.Select(kvp => kvp.Value).ToList();
+                var program = Expression.Block(allVariables, this.Code);
+                var compiledProgram = Expression.Lambda<Action>(program).Compile();
+                compiledProgram();
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+            }
+            return this;
         }
-        catch (Exception e)
-        {
-            System.Console.WriteLine(e.Message);
-        }
-        return this;
+
+
     }
-
-
 }

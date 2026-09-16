@@ -1,11 +1,14 @@
-public abstract class Operation : SyntaxNode
+namespace CompilerV2
 {
-    public SyntaxNode Left { get; set; }
-    public SyntaxNode Right { get; set; }
-
-    public Operation(SyntaxNode left = null, SyntaxNode right = null)
+    public abstract class Operation : SyntaxNode
     {
-        this.Left = left ?? new UnknownSyntax("Unknown");
-        this.Right = right ?? new UnknownSyntax("Unknown");
+        public SyntaxNode Left { get; set; }
+        public SyntaxNode Right { get; set; }
+
+        public Operation(SyntaxNode left = null, SyntaxNode right = null)
+        {
+            this.Left = left ?? new UnknownSyntax("Unknown");
+            this.Right = right ?? new UnknownSyntax("Unknown");
+        }
     }
 }

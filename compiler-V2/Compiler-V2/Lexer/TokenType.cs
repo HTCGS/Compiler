@@ -1,9 +1,12 @@
-public enum TokenType
+namespace CompilerV2
 {
-    Keyword,
-    Letter,
-    Digit,
-    Operator,
-    Bracket,
-    Unknown
+    public enum TokenType
+    {
+        Keyword,
+        Letter,
+        Digit,
+        Operator,
+        Bracket,
+        Unknown
+    }
 }

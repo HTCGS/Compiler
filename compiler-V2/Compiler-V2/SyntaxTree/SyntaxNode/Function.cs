@@ -1,10 +1,13 @@
-class Function : SyntaxNode
+namespace CompilerV2
 {
-    public List<SyntaxNode> Body { get; set; } = new List<SyntaxNode>();
-
-    public Function(string name, params SyntaxNode[] body)
+    class Function : SyntaxNode
     {
-        this.Name = name;
-        this.Body.AddRange(body);
+        public List<SyntaxNode> Body { get; set; } = new List<SyntaxNode>();
+
+        public Function(string name, params SyntaxNode[] body)
+        {
+            this.Name = name;
+            this.Body.AddRange(body);
+        }
     }
 }

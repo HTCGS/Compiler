@@ -1,3 +1,5 @@
+using Compiler_V2.Lexer;
+
 public class Lexer_Tests
 {
     [Fact]

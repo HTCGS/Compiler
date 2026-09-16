@@ -1,11 +1,14 @@
-public class Token
+namespace CompilerV2
 {
-    public TokenType Type { get; set; }
-    public string Lexeme { get; set; }
-
-    public Token(TokenType type, string value)
+    public class Token
     {
-        this.Type = type;
-        this.Lexeme = value;
+        public TokenType Type { get; set; }
+        public string Lexeme { get; set; }
+
+        public Token(TokenType type, string value)
+        {
+            this.Type = type;
+            this.Lexeme = value;
+        }
     }
 }

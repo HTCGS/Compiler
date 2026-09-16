@@ -1,9 +1,12 @@
-public class Constant : SyntaxNode
+namespace CompilerV2
 {
-    public int Value { get; set; }
-
-    public Constant(int value)
+    public class Constant : SyntaxNode
     {
-        this.Value = value;
+        public int Value { get; set; }
+
+        public Constant(int value)
+        {
+            this.Value = value;
+        }
     }
 }

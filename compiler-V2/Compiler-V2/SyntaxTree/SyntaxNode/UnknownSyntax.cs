@@ -1,7 +1,10 @@
-public class UnknownSyntax : SyntaxNode
+namespace CompilerV2
 {
-    public UnknownSyntax(string name)
+    public class UnknownSyntax : SyntaxNode
     {
-        this.Name = name;
+        public UnknownSyntax(string name)
+        {
+            this.Name = name;
+        }
     }
 }

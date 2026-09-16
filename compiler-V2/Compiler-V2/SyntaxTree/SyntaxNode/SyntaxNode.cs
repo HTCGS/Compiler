@@ -1,4 +1,7 @@
-public abstract class SyntaxNode
+namespace CompilerV2
 {
-    public string Name { get; set; }
+    public abstract class SyntaxNode
+    {
+        public string Name { get; set; }
+    }
 }

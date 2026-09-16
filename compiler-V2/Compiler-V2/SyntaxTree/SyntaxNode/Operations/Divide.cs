@@ -1,6 +1,9 @@
-public class Divide : Operation
+namespace CompilerV2
 {
-    public Divide(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "Divide"; }
+    public class Divide : Operation
+    {
+        public Divide(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "Divide"; }
 
-    public Divide() : base(null, null) { this.Name = "Divide"; }
+        public Divide() : base(null, null) { this.Name = "Divide"; }
+    }
 }

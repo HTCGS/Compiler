@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Compiler;
 
 namespace ConsoleApp
@@ -12,7 +13,7 @@ namespace ConsoleApp
             Variables.Integer.Add("num", 10);
 
             Compiler.Compiler compiler = new Compiler.Compiler(new Lexer(), new Parser());
-            compiler.FilePath = @"Pascal\test.ps";
+            compiler.FilePath = Path.Combine(AppContext.BaseDirectory, "Pascal", "test.ps");
             bool lex = compiler.CodeAnalysis();
             if (lex)
             {
@@ -25,7 +26,7 @@ namespace ConsoleApp
                 }
             }
 
-            Console.ReadKey();
+            // Console.ReadKey();
         }
     }
 }

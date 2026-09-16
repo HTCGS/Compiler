@@ -1,9 +1,12 @@
-public class Plus : Operation
+namespace CompilerV2
 {
-    public Plus(SyntaxNode left, SyntaxNode right) : base(left, right)
+    public class Plus : Operation
     {
-        this.Name = "Plus";
-    }
+        public Plus(SyntaxNode left, SyntaxNode right) : base(left, right)
+        {
+            this.Name = "Plus";
+        }
 
-    public Plus() : base(null, null) { this.Name = "Plus"; }
+        public Plus() : base(null, null) { this.Name = "Plus"; }
+    }
 }

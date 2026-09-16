@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using CompilerV2;
+using System.Linq.Expressions;
 
 var res = Expression.Variable(typeof(int), "result");
 
@@ -86,7 +87,12 @@ lexer.Keywords = new List<string> { "if", "then", "else", "write" };
 lexer.Source = source;
 
 var compiler = new Compiler(lexer);
-// compiler.ScanFile(@"../../../Pascal/program.ps");
+compiler.ScanFile(@"../../../Pascal/program.ps")
+        .ParseTokens()
+        .ParseAST()
+        .ExecuteCode(); ;
+
+
 // compiler.Scan(source)
 //         .Scan("write(123456789)")
 //         .ParseTokens()
@@ -99,10 +105,10 @@ var compiler = new Compiler(lexer);
 // var syntaxTree = compiler.AST;
 // syntaxTree.First().Print();
 
-compiler.Scan(source)
-        .ParseTokens()
-        .ParseAST()
-        .ExecuteCode();
+// compiler.Scan(source)
+//         .ParseTokens()
+//         .ParseAST()
+//         .ExecuteCode();
 
 
 // compiler.Scan(source);

@@ -1,6 +1,9 @@
-public class IsEqual : Operation
+namespace CompilerV2
 {
-    public IsEqual(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "IsEqual"; }
+    public class IsEqual : Operation
+    {
+        public IsEqual(SyntaxNode left, SyntaxNode right) : base(left, right) { this.Name = "IsEqual"; }
 
-    public IsEqual() : base(null, null) { this.Name = "IsEqual"; }
+        public IsEqual() : base(null, null) { this.Name = "IsEqual"; }
+    }
 }
