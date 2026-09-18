@@ -8,10 +8,6 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            Variables.Integer.Add("a", 0);
-            Variables.Integer.Add("b", 0);
-            Variables.Integer.Add("num", 10);
-
             Compiler.Compiler compiler = new Compiler.Compiler(new Lexer(), new Parser());
             compiler.FilePath = Path.Combine(AppContext.BaseDirectory, "Pascal", "test.ps");
             bool lex = compiler.CodeAnalysis();

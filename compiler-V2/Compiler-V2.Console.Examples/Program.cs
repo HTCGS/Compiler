@@ -87,10 +87,11 @@ lexer.Keywords = new List<string> { "if", "then", "else", "write" };
 lexer.Source = source;
 
 var compiler = new Compiler(lexer);
-compiler.ScanFile(@"../../../Pascal/program.ps")
-        .ParseTokens()
-        .ParseAST()
-        .ExecuteCode(); ;
+
+// compiler.ScanFile(@"../../../Pascal/program.ps")
+//         .ParseTokens()
+//         .ParseAST()
+//         .ExecuteCode(); ;
 
 
 // compiler.Scan(source)
@@ -105,13 +106,14 @@ compiler.ScanFile(@"../../../Pascal/program.ps")
 // var syntaxTree = compiler.AST;
 // syntaxTree.First().Print();
 
-// compiler.Scan(source)
-//         .ParseTokens()
-//         .ParseAST()
-//         .ExecuteCode();
+compiler.Scan("a=0-1/2-3/4-5/6-7/8-9-0/1-2/3-4/5-6/7-8/9")
+        .Scan("write(a)")
+        .ParseTokens()
+        .ParseAST()
+        .ExecuteCode();
 
 
-// compiler.Scan(source);
+// compiler.Scan(source);   
 // var tokens = compiler.TokenTable.First();
 // tokens.PrintTokens();
 

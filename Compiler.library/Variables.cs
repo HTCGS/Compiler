@@ -36,6 +36,9 @@ namespace Compiler
             Char = new Dictionary<string, char>();
             String = new Dictionary<string, string>();
             Boolean = new Dictionary<string, bool>();
+
+            Integer.Add("a", 0);
+            Integer.Add("b", 0);
         }
 
         public static dynamic GetVariable(string name)
@@ -56,7 +59,7 @@ namespace Compiler
 
         public static void SetVariable(string name, dynamic value)
         {
-            if (Variables.Byte.ContainsKey(name)) Byte[name] = (byte) value;
+            if (Variables.Byte.ContainsKey(name)) Byte[name] = (byte)value;
             if (Variables.Shortint.ContainsKey(name)) Shortint[name] = value;
             if (Variables.Smallint.ContainsKey(name)) Smallint[name] = value;
             if (Variables.Longint.ContainsKey(name)) Longint[name] = value;
