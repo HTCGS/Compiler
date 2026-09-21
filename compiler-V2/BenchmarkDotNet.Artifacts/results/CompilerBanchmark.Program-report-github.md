@@ -8,7 +8,7 @@ Intel Core i7-8700 CPU 3.20GHz (Max: 3.19GHz) (Coffee Lake), 1 CPU, 12 logical a
 
 
 ```
-| Method      | Mean      | Error     | StdDev    |
-|------------ |----------:|----------:|----------:|
-| Compiler_V1 | 26.395 ms | 0.3853 ms | 0.3604 ms |
-| Compiler_V2 |  2.101 ms | 0.0259 ms | 0.0242 ms |
+| Method      | Mean     | Error    | StdDev   |
+|------------ |---------:|---------:|---------:|
+| Compiler_V1 | 30.856 s | 0.2623 s | 0.2325 s |
+| Compiler_V2 |  5.308 s | 0.0479 s | 0.0448 s |
