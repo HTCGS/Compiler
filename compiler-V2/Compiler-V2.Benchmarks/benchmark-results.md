@@ -48,3 +48,19 @@ Future test runs on other machines should be added in separate sections with a m
 - CPU: Intel Core i7-8700
 - Benchmark date: 2026-09-21
 - Configuration: Single-machine baseline run
+
+## Additional Machine Results: Intel Core i7-3770
+
+- BenchmarkDotNet: v0.15.8
+- Operating System: Linux Ubuntu 26.04.1 LTS (Resolute Raccoon)
+- CPU: Intel Core i7-3770 CPU 3.40GHz (Ivy Bridge)
+- CPU topology: 1 CPU, 8 logical cores, 4 physical cores
+- .NET SDK: 10.0.112
+- Runtime: .NET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v2
+- Host: .NET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v2
+- Job: DefaultJob
+
+| Method | Mean | Error | StdDev |
+|---|---:|---:|---:|
+| Compiler_V1 | 42.510 s | 0.4347 s | 0.3630 s |
+| Compiler_V2 | 7.290 s | 0.0719 s | 0.0638 s |
