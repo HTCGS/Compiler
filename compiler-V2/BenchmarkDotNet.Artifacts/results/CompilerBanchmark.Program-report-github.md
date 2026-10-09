@@ -8,7 +8,6 @@ Intel Core i7-3770 CPU 3.40GHz (Ivy Bridge), 1 CPU, 8 logical and 4 physical cor
 
 
 ```
-| Method      | Mean     | Error    | StdDev   |
-|------------ |---------:|---------:|---------:|
-| Compiler_V1 | 41.173 s | 0.3848 s | 0.3600 s |
-| Compiler_V2 |  6.874 s | 0.1160 s | 0.1028 s |
+| Method      | Mean    | Error    | StdDev   |
+|------------ |--------:|---------:|---------:|
+| Compiler_V2 | 6.441 s | 0.0365 s | 0.0323 s |

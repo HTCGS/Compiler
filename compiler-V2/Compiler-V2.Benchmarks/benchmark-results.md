@@ -71,9 +71,18 @@ Memory configuration: 4 × 4 GB DDR3 modules.
 
 ### Latest Run
 
-Memory configuration: 2 × 8 GB DDR3 modules.
+Memory configuration: 2 × 8 GB DDR3 modules at 1600 MHz.
 
 | Method | Mean | Error | StdDev |
 |---|---:|---:|---:|
 | Compiler_V1 | 41.173 s | 0.3848 s | 0.3600 s |
 | Compiler_V2 | 6.874 s | 0.1160 s | 0.1028 s |
+
+### New Run
+
+Memory configuration: 2 × 8 GB DDR3 modules at 2400 MHz.
+
+| Method | Mean | Error | StdDev |
+|---|---:|---:|---:|
+| Compiler_V1 | 38.606 s | 0.1936 s | 0.1717 s |
+| Compiler_V2 | 6.441 s | 0.0365 s | 0.0323 s |
