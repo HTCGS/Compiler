@@ -60,7 +60,20 @@ Future test runs on other machines should be added in separate sections with a m
 - Host: .NET 10.0.12 (10.0.12, 10.0.1226.42308), X64 RyuJIT x86-64-v2
 - Job: DefaultJob
 
+### Previous Run
+
+Memory configuration: 4 × 4 GB DDR3 modules.
+
 | Method | Mean | Error | StdDev |
 |---|---:|---:|---:|
 | Compiler_V1 | 42.510 s | 0.4347 s | 0.3630 s |
 | Compiler_V2 | 7.290 s | 0.0719 s | 0.0638 s |
+
+### Latest Run
+
+Memory configuration: 2 × 8 GB DDR3 modules.
+
+| Method | Mean | Error | StdDev |
+|---|---:|---:|---:|
+| Compiler_V1 | 41.173 s | 0.3848 s | 0.3600 s |
+| Compiler_V2 | 6.874 s | 0.1160 s | 0.1028 s |
